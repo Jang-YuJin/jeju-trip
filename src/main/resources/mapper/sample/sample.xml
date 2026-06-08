@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "com.trip.jeju.sample.mapper.SampleMapper">
+    <insert id="create" parameterType="com.trip.jeju.sample.vo.SampleVO"
+            useGeneratedKeys="true" keyProperty="empId">
+        INSERT INTO sample /* insertEmployee / 샘플 생성 */
+            (name
+            , department
+            , salary
+            , hire_date)
+        VALUES
+            (#{name}
+            , #{department}
+            , #{salary}
+            , #{hireDate})
+    </insert>
+
+    <select id="selectById" parameterType="int" resultType="com.trip.jeju.sample.vo.SampleVO">
+        SELECT /* selectEmployeeById / 샘플 단건조회 */
+            emp_id AS empId,
+            name,
+            department,
+            salary,
+            hire_date AS hireDate
+        FROM sample
+        WHERE emp_id = #{empId}
+    </select>
+
+    <select id="selectAll" resultType="com.trip.jeju.sample.vo.SampleVO">
+        SELECT /* selectAllEmployees / 샘플 다건조회 */
+            emp_id AS empId,
+            name,
+            department,
+            salary,
+            hire_date AS hireDate
+        FROM sample
+        ORDER BY emp_id DESC
+    </select>
+
+    <update id="update" parameterType="com.trip.jeju.sample.vo.SampleVO">
+        UPDATE sample /* updateEmployee / 샘플 수정 */
+        SET
+            name = #{name},
+            department = #{department},
+            salary = #{salary},
+            hire_date = #{hireDate}
+        WHERE emp_id = #{empId}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM sample /* deleteEmployee / 샘플 삭제 */
+        WHERE emp_id = #{empId}
+    </delete>
+</mapper>
