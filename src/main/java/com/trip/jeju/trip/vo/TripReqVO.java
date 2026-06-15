@@ -10,4 +10,7 @@ import lombok.*;
 public class TripReqVO {
     private String keyword;
     private int pageNo;
+    private String mapX;
+    private String mapY;
+    private String radius;
 }

@@ -1,7 +1,6 @@
 package com.trip.jeju.trip.service;
 
-import com.trip.jeju.trip.vo.TripDetailVO;
-import com.trip.jeju.trip.vo.TripReqVO;
+import com.trip.jeju.trip.vo.TripResVO;
 import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +11,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -35,22 +34,21 @@ public class SearchTripService {
     @Value("${api.mobile.app}")
     private String app;
 
-    public List<TripDetailVO> searchTrip(TripReqVO req){
+    public List<TripResVO> searchTrip(Map<String, Object> params, String endpoint){
         int numOfRows = 10;
         String lDongRegnCd = "50";
-        String url = UriComponentsBuilder
-                .fromUriString(baseUrl + "/searchKeyword2")
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(baseUrl + endpoint)
                 .queryParam("serviceKey", key)
-                .queryParam("pageNo", req.getPageNo())
                 .queryParam("numOfRows", numOfRows)
                 .queryParam("MobileOS", os)
                 .queryParam("MobileApp", app)
                 .queryParam("lDongRegnCd", lDongRegnCd)
-                .queryParam("keyword", req.getKeyword())
-                .queryParam("_type", "json")
-                .build(false)
-                .toUriString();
+                .queryParam("_type", "json");
 
+        params.forEach(builder::queryParam);
+
+        String url = builder.build(false).toUriString();
         log.info("한국관광공사_국문 관광정보 서비스_GW - url: {}", url);
 
         try {
@@ -82,9 +80,9 @@ public class SearchTripService {
                 return Collections.emptyList();
             }
 
-            List<TripDetailVO> result = new ArrayList<>();
+            List<TripResVO> result = new ArrayList<>();
             for (JsonNode item : items) {
-                result.add(toTripDetailVO(item));
+                result.add(toTripResVO(item));
             }
 
             log.info("한국관광공사_국문 관광정보 서비스_GW API 조회 완료 - {}건", result.size());
@@ -96,25 +94,64 @@ public class SearchTripService {
         }
     }
 
-    private TripDetailVO toTripDetailVO(JsonNode item) {
-        return TripDetailVO.builder()
-                .spotName(item.path("title").asText())
-                .address(item.path("addr1").asText())
-                .sigunguCd(item.path("lDongSignguCd").asText())
-                .latitude(parseDecimal(item.path("mapy").asText()))   // 위도
-                .longitude(parseDecimal(item.path("mapx").asText()))  // 경도
-                .category(item.path("cat3").asText())
-                .thumnail(item.path("firstimage").asText())
-                .build();
-    }
-
-    private BigDecimal parseDecimal(String value) {
-        if (value == null || value.isBlank()) return BigDecimal.ZERO;
+    private TripResVO toTripResVO(JsonNode item) {
         try {
-            return new BigDecimal(value);
-        } catch (NumberFormatException e) {
-            log.warn("좌표 변환 실패 - value: {}", value);
-            return BigDecimal.ZERO;
+            String url = UriComponentsBuilder
+                    .fromUriString(baseUrl + "/lclsSystmCode2")
+                    .queryParam("serviceKey", key)
+                    .queryParam("numOfRows", 1)
+                    .queryParam("MobileOS", os)
+                    .queryParam("MobileApp", app)
+                    .queryParam("lclsSystm1", item.path("lclsSystm1").asText())
+                    .queryParam("lclsSystm2", item.path("lclsSystm2").asText())
+                    .queryParam("lclsSystm3", item.path("lclsSystm3").asText())
+                    .queryParam("_type", "json")
+                    .build(false).toUriString();
+            log.info("한국관광공사_국문 관광정보 서비스_GW 분류체계 코드조회 - url: {}", url);
+
+            String jsonResponse = restTemplate.getForObject(url, String.class);
+            log.debug("API 응답 JSON - {}", jsonResponse);
+
+            JsonNode root = objectMapper.readTree(jsonResponse);
+
+            String resultCode = root
+                    .path("response")
+                    .path("header")
+                    .path("resultCode")
+                    .asText();
+
+            if (!"0000".equals(resultCode)) {
+                String resultMsg = root.path("response").path("header").path("resultMsg").asText();
+                log.warn("API 오류 - resultCode: {}, resultMsg: {}", resultCode, resultMsg);
+                return null;
+            }
+
+            JsonNode items = root
+                    .path("response")
+                    .path("body")
+                    .path("items")
+                    .path("item");
+
+            if (items.isMissingNode() || !items.isArray()) {
+                log.warn("조회 결과 없음");
+                return null;
+            }
+
+            return TripResVO.builder()
+                    .contentid(item.path("contentid").asText())
+                    .zipcode(item.path("zipcode").asText())
+                    .addr1(item.path("addr1").asText())
+                    .addr2(item.path("addr2").asText())
+                    .firstimage(item.path("firstimage").asText())
+                    .mapx(item.path("mapx").asText())
+                    .mapy(item.path("mapy").asText())
+                    .tel(item.path("tel").asText())
+                    .title(item.path("title").asText())
+                    .lclsSystm3Nm(items.get(0).path("name").asText())
+                    .build();
+        } catch (Exception e) {
+            log.error("한국관광공사_국문 관광정보 서비스_GW 분류체계 코드조회 API 호출 실패 - {}", e.getMessage());
+            return null;
         }
     }
 }
