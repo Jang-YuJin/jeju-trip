@@ -105,6 +105,7 @@ public class SearchTripService {
                     .queryParam("lclsSystm1", item.path("lclsSystm1").asText())
                     .queryParam("lclsSystm2", item.path("lclsSystm2").asText())
                     .queryParam("lclsSystm3", item.path("lclsSystm3").asText())
+                    .queryParam("lclsSystmListYn", "Y")
                     .queryParam("_type", "json")
                     .build(false).toUriString();
             log.info("한국관광공사_국문 관광정보 서비스_GW 분류체계 코드조회 - url: {}", url);
@@ -147,7 +148,9 @@ public class SearchTripService {
                     .mapy(item.path("mapy").asText())
                     .tel(item.path("tel").asText())
                     .title(item.path("title").asText())
-                    .lclsSystm3Nm(items.get(0).path("name").asText())
+                    .lclsSystm1Nm(items.get(0).path("lclsSystm1Nm").asText())
+                    .lclsSystm2Nm(items.get(0).path("lclsSystm2Nm").asText())
+                    .lclsSystm3Nm(items.get(0).path("lclsSystm3Nm").asText())
                     .build();
         } catch (Exception e) {
             log.error("한국관광공사_국문 관광정보 서비스_GW 분류체계 코드조회 API 호출 실패 - {}", e.getMessage());

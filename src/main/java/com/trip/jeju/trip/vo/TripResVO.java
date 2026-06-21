@@ -17,5 +17,7 @@ public class TripResVO {
     private String mapy;
     private String tel;
     private String title;
+    private String lclsSystm1Nm;
+    private String lclsSystm2Nm;
     private String lclsSystm3Nm;
 }
