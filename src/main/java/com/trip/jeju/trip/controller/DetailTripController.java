@@ -2,6 +2,7 @@ package com.trip.jeju.trip.controller;
 
 import com.trip.jeju.common.vo.ApiResponse;
 import com.trip.jeju.trip.service.DetailTripService;
+import com.trip.jeju.trip.vo.DetailAllResVO;
 import com.trip.jeju.trip.vo.DetailCommonResVO;
 import com.trip.jeju.trip.vo.DetailIntroResVO;
 import com.trip.jeju.trip.vo.DetailReqVO;
@@ -44,6 +45,21 @@ public class DetailTripController {
         return ResponseEntity.ok(
                 ApiResponse.ok(
                         detailTripService.detailIntro(params)
+                )
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<DetailAllResVO>> detail(
+            @ModelAttribute DetailReqVO detailReqVO
+    ) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("contentId", detailReqVO.getContentId());
+        params.put("contentTypeId", detailReqVO.getContentTypeId());
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(
+                        detailTripService.detailAll(params)
                 )
         );
     }
