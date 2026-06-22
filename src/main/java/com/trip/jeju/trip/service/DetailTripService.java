@@ -15,6 +15,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -269,11 +270,25 @@ public class DetailTripService {
 
     public DetailAllResVO detailAll(Map<String, Object> params) {
 
+        Map<String, Object> commonParams = new HashMap<>();
+        commonParams.put("contentId", params.get("contentId"));
+
+        Map<String, Object> introParams = new HashMap<>();
+        introParams.put("contentId", params.get("contentId"));
+        introParams.put("contentTypeId", params.get("contentTypeId"));
+
+        Map<String, Object> infoParams = new HashMap<>();
+        infoParams.put("contentId", params.get("contentId"));
+        infoParams.put("contentTypeId", params.get("contentTypeId"));
+
+        Map<String, Object> imageParams = new HashMap<>();
+        imageParams.put("contentId", params.get("contentId"));
+
         return DetailAllResVO.builder()
-                .common(detailCommon(params))
-                .intro(detailIntro(params))
-                .info(detailInfo(params))
-                .image(detailImage(params))
+                .common(detailCommon(commonParams))
+                .intro(detailIntro(introParams))
+                .info(detailInfo(infoParams))
+                .image(detailImage(imageParams))
                 .build();
     }
 
