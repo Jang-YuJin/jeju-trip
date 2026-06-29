@@ -28,10 +28,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-//                        나중에 회원 인증 필요하면 주석 풂
-//                        .requestMatchers("/auth/**", "/error").permitAll()
-//                        .anyRequest().authenticated()
-                          .anyRequest().permitAll() //일단 모든 경로 인증 없이 열어둠
+                        .requestMatchers("/trip/**").authenticated()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
                         UsernamePasswordAuthenticationFilter.class);

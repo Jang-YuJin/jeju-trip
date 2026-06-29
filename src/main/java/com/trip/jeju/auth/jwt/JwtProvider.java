@@ -23,15 +23,15 @@ public class JwtProvider {
         this.refreshTokenValidity = refreshTokenValidity;
     }
 
-    public String createAccessToken(Long userId, String role) {
+    public String createAccessToken(Integer userId, String role) {
         return createToken(userId, role, accessTokenValidity);
     }
 
-    public String createRefreshToken(Long userId) {
+    public String createRefreshToken(Integer userId) {
         return createToken(userId, null, refreshTokenValidity);
     }
 
-    private String createToken(Long userId, String role, long validity) {
+    private String createToken(Integer userId, String role, long validity) {
         Date now = new Date();
         JwtBuilder builder = Jwts.builder()
                 .subject(String.valueOf(userId))
@@ -42,8 +42,8 @@ public class JwtProvider {
         return builder.compact();
     }
 
-    public Long getUserId(String token) {
-        return Long.parseLong(parse(token).getPayload().getSubject());
+    public Integer getUserId(String token) {
+        return Integer.parseInt(parse(token).getPayload().getSubject());
     }
 
     public String getRole(String token) {

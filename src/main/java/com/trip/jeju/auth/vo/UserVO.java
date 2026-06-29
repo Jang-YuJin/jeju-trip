@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UserVO {
-    private Long id;
+    private Integer id;
     private String email;
     private String nickname;
     private String phoneNumber;
