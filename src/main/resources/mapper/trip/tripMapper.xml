@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trip.jeju.trip.mapper.TripMapper">
+
+    <!-- 검색조건 공통 부분 (재사용) -->
+    <sql id="searchCondition">
+        <if test="spotName != null and spotName != ''">
+            AND d.SPOT_NAME LIKE CONCAT('%', #{spotName}, '%')
+        </if>
+        <if test="category != null and category != ''">
+            AND d.CATEGORY = #{category}
+        </if>
+    </sql>
+
+    <!-- 목록 조회 (페이징 + 검색조건) -->
+    <select id="selectTripList" resultType="com.trip.jeju.trip.vo.TripVO">
+        SELECT DISTINCT
+        t.TRIP_ID, t.USER_ID, t.TRIP_NAME, t.START_DATE, t.END_DATE,
+        t.IS_AI_ROUTE, t.SHARE_CODE, t.CREATED_AT, t.UPDATED_AT
+        FROM TRIP t
+        <!-- 검색조건이 있을 때만 JOIN (불필요한 JOIN 방지) -->
+        <if test="spotName != null and spotName != '' or category != null and category != ''">
+            INNER JOIN TRIP_DETAIL d ON t.TRIP_ID = d.TRIP_ID
+        </if>
+        <where>
+            <include refid="searchCondition"/>
+        </where>
+        ORDER BY t.CREATED_AT DESC
+        LIMIT #{offset}, #{numOfRows}
+    </select>
+
+    <!-- 검색조건에 맞는 전체 개수 -->
+    <select id="selectTripCount" resultType="int">
+        SELECT COUNT(DISTINCT t.TRIP_ID)
+        FROM TRIP t
+        <if test="spotName != null and spotName != '' or category != null and category != ''">
+            INNER JOIN TRIP_DETAIL d ON t.TRIP_ID = d.TRIP_ID
+        </if>
+        <where>
+            <include refid="searchCondition"/>
+        </where>
+    </select>
+
+    <!-- 단건 조회 -->
+    <select id="selectTripById" resultType="com.trip.jeju.trip.vo.TripVO">
+        SELECT
+        TRIP_ID, USER_ID, TRIP_NAME, START_DATE, END_DATE,
+        IS_AI_ROUTE, SHARE_CODE, CREATED_AT, UPDATED_AT
+        FROM TRIP
+        WHERE TRIP_ID = #{tripId}
+    </select>
+
+    <insert id="insertTrip" parameterType="com.trip.jeju.trip.vo.TripVO" useGeneratedKeys="true" keyProperty="tripId">
+        INSERT INTO TRIP (
+        USER_ID, TRIP_NAME, START_DATE, END_DATE, IS_AI_ROUTE, SHARE_CODE
+        ) VALUES (
+        #{userId}, #{tripName}, #{startDate}, #{endDate}, #{isAiRoute}, #{shareCode}
+        )
+    </insert>
+
+    <update id="updateTrip" parameterType="com.trip.jeju.trip.vo.TripVO">
+        UPDATE TRIP
+        SET TRIP_NAME = #{tripName},
+        START_DATE = #{startDate},
+        END_DATE = #{endDate},
+        IS_AI_ROUTE = #{isAiRoute},
+        SHARE_CODE = #{shareCode}
+        WHERE TRIP_ID = #{tripId}
+    </update>
+
+    <delete id="deleteTrip">
+        DELETE FROM TRIP WHERE TRIP_ID = #{tripId}
+    </delete>
+
+    <!-- 특정 TRIP의 디테일 목록 (방문순서 정렬) -->
+    <select id="selectDetailsByTripId" resultType="com.trip.jeju.trip.vo.TripDetailVO">
+        SELECT
+        DETAIL_ID, TRIP_ID, CONTENT_ID, CONTENT_TYPE_ID, SPOT_NAME, CATEGORY,
+        ADDRESS, SIGUNGU_CD, LATITUDE, LONGITUDE, VISIT_TIME,
+        VISIT_DATE, ESTIMATED_STAY, THUMNAIL, CREATED_AT, UPDATED_AT
+        FROM TRIP_DETAIL
+        WHERE TRIP_ID = #{tripId}
+        ORDER BY VISIT_TIME ASC
+    </select>
+
+    <!-- 등록 (단건) -->
+    <insert id="insertDetail" parameterType="com.trip.jeju.trip.vo.TripDetailVO" useGeneratedKeys="true" keyProperty="detailId">
+        INSERT INTO TRIP_DETAIL (
+        TRIP_ID, CONTENT_ID, CONTENT_TYPE_ID, SPOT_NAME, CATEGORY,
+        ADDRESS, SIGUNGU_CD, LATITUDE, LONGITUDE, VISIT_TIME,
+        VISIT_DATE, ESTIMATED_STAY, THUMNAIL
+        ) VALUES (
+        #{tripId}, #{contentId}, #{contentTypeId}, #{spotName}, #{category},
+        #{address}, #{sigunguCd}, #{latitude}, #{longitude}, #{visitTime},
+        #{visitDate}, #{estimatedStay}, #{thumnail}
+        )
+    </insert>
+
+    <!-- 수정 (단건) -->
+    <update id="updateDetail" parameterType="com.trip.jeju.trip.vo.TripDetailVO">
+        UPDATE TRIP_DETAIL
+        SET CONTENT_ID = #{contentId},
+        CONTENT_TYPE_ID = #{contentTypeId},
+        SPOT_NAME = #{spotName},
+        CATEGORY = #{category},
+        ADDRESS = #{address},
+        SIGUNGU_CD = #{sigunguCd},
+        LATITUDE = #{latitude},
+        LONGITUDE = #{longitude},
+        VISIT_TIME = #{visitTime},
+        VISIT_DATE = #{visitDate},
+        ESTIMATED_STAY = #{estimatedStay},
+        THUMNAIL = #{thumnail}
+        WHERE DETAIL_ID = #{detailId}
+    </update>
+
+    <!-- TRIP의 디테일 전체 삭제 (수정 시 갈아끼우기 또는 TRIP 삭제 시 사용) -->
+    <delete id="deleteDetailsByTripId">
+        DELETE FROM TRIP_DETAIL WHERE TRIP_ID = #{tripId}
+    </delete>
+</mapper>
