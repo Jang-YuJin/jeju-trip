@@ -2,6 +2,7 @@ package com.trip.jeju.auth.controller;
 
 import com.trip.jeju.auth.service.AuthService;
 import com.trip.jeju.auth.vo.LoginRequest;
+import com.trip.jeju.auth.vo.RefreshRequest;
 import com.trip.jeju.auth.vo.SignupRequest;
 import com.trip.jeju.auth.vo.TokenResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest req) {
         return ResponseEntity.ok(authService.login(req));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponse> refresh(@RequestBody RefreshRequest req) {
+        return ResponseEntity.ok(authService.refresh(req));
     }
 }

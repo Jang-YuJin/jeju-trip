@@ -11,6 +11,10 @@ import java.util.Date;
 
 @Component
 public class JwtProvider {
+    private static final String CLAIM_TYPE = "type";
+    private static final String TYPE_ACCESS = "ACCESS";
+    private static final String TYPE_REFRESH = "REFRESH";
+
     private final SecretKey key;
     private final long accessTokenValidity;
     private final long refreshTokenValidity;
@@ -24,22 +28,26 @@ public class JwtProvider {
     }
 
     public String createAccessToken(Integer userId, String role) {
-        return createToken(userId, role, accessTokenValidity);
+        Date now = new Date();
+        return Jwts.builder()
+                .subject(String.valueOf(userId))
+                .claim(CLAIM_TYPE, TYPE_ACCESS)
+                .claim("role", role)
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + accessTokenValidity))
+                .signWith(key)
+                .compact();
     }
 
     public String createRefreshToken(Integer userId) {
-        return createToken(userId, null, refreshTokenValidity);
-    }
-
-    private String createToken(Integer userId, String role, long validity) {
         Date now = new Date();
-        JwtBuilder builder = Jwts.builder()
+        return Jwts.builder()
                 .subject(String.valueOf(userId))
+                .claim(CLAIM_TYPE, TYPE_REFRESH)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + validity))
-                .signWith(key);
-        if (role != null) builder.claim("role", role);
-        return builder.compact();
+                .expiration(new Date(now.getTime() + refreshTokenValidity))
+                .signWith(key)
+                .compact();
     }
 
     public Integer getUserId(String token) {
@@ -48,6 +56,11 @@ public class JwtProvider {
 
     public String getRole(String token) {
         return parse(token).getPayload().get("role", String.class);
+    }
+
+    public boolean isRefreshToken(String token) {
+        String type = parse(token).getPayload().get(CLAIM_TYPE, String.class);
+        return TYPE_REFRESH.equals(type);
     }
 
     public boolean validateToken(String token) {

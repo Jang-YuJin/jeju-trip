@@ -3,6 +3,7 @@ package com.trip.jeju.auth.service;
 import com.trip.jeju.auth.jwt.JwtProvider;
 import com.trip.jeju.auth.mapper.UserMapper;
 import com.trip.jeju.auth.vo.*;
+import com.trip.jeju.common.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ public class AuthService {
         UserVO user = new UserVO();
         user.setEmail(req.getEmail());
         user.setNickname(req.getNickname());
+        user.setName(req.getName());
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
         user.setAuthProvider(AuthProvider.LOCAL.name());
         user.setRole(UserRole.MEMBER.name());
@@ -42,5 +44,24 @@ public class AuthService {
                 jwtProvider.createAccessToken(user.getId(), user.getRole()),
                 jwtProvider.createRefreshToken(user.getId())
         );
+    }
+
+    public TokenResponse refresh(RefreshRequest req) {
+        String refreshToken = req.getRefreshToken();
+
+        if (!jwtProvider.validateToken(refreshToken)) {
+            throw new UnauthorizedException("리프레시 토큰이 유효하지 않습니다.");
+        }
+        if (!jwtProvider.isRefreshToken(refreshToken)) {
+            throw new UnauthorizedException("리프레시 토큰이 아닙니다.");
+        }
+
+        Integer userId = jwtProvider.getUserId(refreshToken);
+        UserVO user = userMapper.findById(userId);
+        if (user == null) {
+            throw new UnauthorizedException("존재하지 않는 사용자입니다.");
+        }
+
+        return issueTokens(user);
     }
 }

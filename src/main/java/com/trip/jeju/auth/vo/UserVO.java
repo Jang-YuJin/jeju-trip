@@ -11,7 +11,7 @@ public class UserVO {
     private Integer id;
     private String email;
     private String nickname;
-    private String phoneNumber;
+    private String name;
     private String passwordHash;
     private String authProvider; // AuthProvider.name()
     private String socialId;
