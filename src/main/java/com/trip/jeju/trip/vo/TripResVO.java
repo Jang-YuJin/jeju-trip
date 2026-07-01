@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class TripResVO {
     private String contentid;
+    private String contenttypeid;
     private String zipcode;
     private String addr1;
     private String addr2;

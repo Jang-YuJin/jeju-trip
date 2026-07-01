@@ -140,6 +140,7 @@ public class SearchTripService {
 
             return TripResVO.builder()
                     .contentid(item.path("contentid").asText())
+                    .contenttypeid(item.path("contenttypeid").asText())
                     .zipcode(item.path("zipcode").asText())
                     .addr1(item.path("addr1").asText())
                     .addr2(item.path("addr2").asText())

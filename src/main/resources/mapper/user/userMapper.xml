@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trip.jeju.auth.mapper.UserMapper">
+
+    <select id="findByEmail" resultType="com.trip.jeju.auth.vo.UserVO">
+        SELECT ID, EMAIL, NICKNAME, NAME, PASSWORD_HASH,
+               AUTH_PROVIDER, SOCIAL_ID, ROLE, IMG, CREATED_AT, UPDATED_AT
+        FROM USER WHERE EMAIL = #{email}
+    </select>
+
+    <select id="findById" resultType="com.trip.jeju.auth.vo.UserVO">
+        SELECT ID, EMAIL, NICKNAME, NAME, PASSWORD_HASH,
+               AUTH_PROVIDER, SOCIAL_ID, ROLE, IMG, CREATED_AT, UPDATED_AT
+        FROM USER WHERE ID = #{id}
+    </select>
+
+    <insert id="insertUser" parameterType="com.trip.jeju.auth.vo.UserVO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO USER (EMAIL, NICKNAME, NAME, PASSWORD_HASH,
+                          AUTH_PROVIDER, SOCIAL_ID, ROLE, IMG)
+        VALUES (#{email}, #{nickname}, #{name}, #{passwordHash},
+                #{authProvider}, #{socialId}, #{role}, #{img})
+    </insert>
+</mapper>
