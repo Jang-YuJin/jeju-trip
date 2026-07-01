@@ -134,19 +134,56 @@ public class DetailTripService {
             return DetailIntroResVO.builder()
                     .contentid(item.path("contentid").asText())
                     .contenttypeid(item.path("contenttypeid").asText())
-                    .infocenter(item.path("infocenter").asText())
-                    .restdate(item.path("restdate").asText())
-                    .usetime(item.path("usetime").asText())
-                    .parking(item.path("parking").asText())
+
+                    // 관광지
+                    .accomcount(item.path("accomcount").asText())
+                    .chkbabycarriage(item.path("chkbabycarriage").asText())
+                    .chkcreditcard(item.path("chkcreditcard").asText())
                     .chkpet(item.path("chkpet").asText())
-                    .expguide(item.path("expguide").asText())
                     .expagerange(item.path("expagerange").asText())
+                    .expguide(item.path("expguide").asText())
+                    .heritage1(item.path("heritage1").asText())
+                    .heritage2(item.path("heritage2").asText())
+                    .heritage3(item.path("heritage3").asText())
+                    .infocenter(item.path("infocenter").asText())
+                    .opendate(item.path("opendate").asText())
+                    .parking(item.path("parking").asText())
+                    .restdate(item.path("restdate").asText())
+                    .useseason(item.path("useseason").asText())
+                    .usetime(item.path("usetime").asText())
+
+                    // 쇼핑
+                    .chkbabycarriageshopping(item.path("chkbabycarriageshopping").asText())
+                    .chkcreditcardshopping(item.path("chkcreditcardshopping").asText())
+                    .chkpetshopping(item.path("chkpetshopping").asText())
+                    .culturecenter(item.path("culturecenter").asText())
+                    .fairday(item.path("fairday").asText())
                     .infocentershopping(item.path("infocentershopping").asText())
-                    .restdateshopping(item.path("restdateshopping").asText())
-                    .parkingshopping(item.path("parkingshopping").asText())
+                    .opendateshopping(item.path("opendateshopping").asText())
                     .opentime(item.path("opentime").asText())
+                    .parkingshopping(item.path("parkingshopping").asText())
+                    .restdateshopping(item.path("restdateshopping").asText())
                     .restroom(item.path("restroom").asText())
                     .saleitem(item.path("saleitem").asText())
+                    .saleitemcost(item.path("saleitemcost").asText())
+                    .scaleshopping(item.path("scaleshopping").asText())
+                    .shopguide(item.path("shopguide").asText())
+
+                    // 음식점
+                    .firstmenu(item.path("firstmenu").asText())
+                    .treatmenu(item.path("treatmenu").asText())
+                    .opentimefood(item.path("opentimefood").asText())
+                    .restdatefood(item.path("restdatefood").asText())
+                    .parkingfood(item.path("parkingfood").asText())
+                    .infocenterfood(item.path("infocenterfood").asText())
+
+                    // 숙박
+                    .checkintime(item.path("checkintime").asText())
+                    .checkouttime(item.path("checkouttime").asText())
+                    .roomcount(item.path("roomcount").asText())
+                    .reservationlodging(item.path("reservationlodging").asText())
+                    .parkinglodging(item.path("parkinglodging").asText())
+
                     .build();
 
         } catch (Exception e) {
