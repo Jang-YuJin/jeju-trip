@@ -149,9 +149,14 @@ public class SearchTripService {
                     .mapy(item.path("mapy").asText())
                     .tel(item.path("tel").asText())
                     .title(item.path("title").asText())
+                    .lclsSystm1(item.path("lclsSystm1").asText())
+                    .lclsSystm2(item.path("lclsSystm2").asText())
+                    .lclsSystm3(item.path("lclsSystm3").asText())
                     .lclsSystm1Nm(items.get(0).path("lclsSystm1Nm").asText())
                     .lclsSystm2Nm(items.get(0).path("lclsSystm2Nm").asText())
                     .lclsSystm3Nm(items.get(0).path("lclsSystm3Nm").asText())
+                    .lDongRegnCd(items.get(0).path("lDongRegnCd").asText())
+                    .lDongSignguCd(items.get(0).path("lDongSignguCd").asText())
                     .build();
         } catch (Exception e) {
             log.error("한국관광공사_국문 관광정보 서비스_GW 분류체계 코드조회 API 호출 실패 - {}", e.getMessage());
