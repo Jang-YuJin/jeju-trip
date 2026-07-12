@@ -25,7 +25,7 @@ public class DetailTripController {
             @ModelAttribute DetailReqVO detailReqVO
     ) {
         Map<String, Object> params = new HashMap<>();
-        params.put("contentId", detailReqVO.getContentId());
+        params.put("contentId", detailReqVO.getContentid());
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
@@ -39,8 +39,8 @@ public class DetailTripController {
             @ModelAttribute DetailReqVO detailReqVO
     ) {
         Map<String, Object> params = new HashMap<>();
-        params.put("contentId", detailReqVO.getContentId());
-        params.put("contentTypeId", detailReqVO.getContentTypeId());
+        params.put("contentId", detailReqVO.getContentid());
+        params.put("contentTypeId", detailReqVO.getContenttypeid());
 
         return ResponseEntity.ok(
                 ApiResponse.ok(
@@ -54,8 +54,8 @@ public class DetailTripController {
             @ModelAttribute DetailReqVO detailReqVO
     ) {
         Map<String, Object> params = new HashMap<>();
-        params.put("contentId", detailReqVO.getContentId());
-        params.put("contentTypeId", detailReqVO.getContentTypeId());
+        params.put("contentId", detailReqVO.getContentid());
+        params.put("contentTypeId", detailReqVO.getContenttypeid());
 
         return ResponseEntity.ok(
                 ApiResponse.ok(

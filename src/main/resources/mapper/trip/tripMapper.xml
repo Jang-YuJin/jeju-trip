@@ -75,42 +75,107 @@
     <!-- 특정 TRIP의 디테일 목록 (방문순서 정렬) -->
     <select id="selectDetailsByTripId" resultType="com.trip.jeju.trip.vo.TripDetailVO">
         SELECT
-        DETAIL_ID, TRIP_ID, CONTENT_ID, CONTENT_TYPE_ID, SPOT_NAME, CATEGORY,
-        ADDRESS, SIGUNGU_CD, LATITUDE, LONGITUDE, VISIT_TIME,
-        VISIT_DATE, ESTIMATED_STAY, THUMNAIL, CREATED_AT, UPDATED_AT
+            DETAIL_ID
+            , TRIP_ID
+            , CONTENT_ID
+            , CONTENT_TYPE_ID
+            , TITLE
+            , TEL
+            , LC_LS_SYSTM1
+            , LC_LS_SYSTM2
+            , LC_LS_SYSTM3
+            , LC_LS_SYSTM1_NM
+            , LC_LS_SYSTM2_NM
+            , LC_LS_SYSTM3_NM
+            , ZIPCODE
+            , ADDR1
+            , ADDR2
+            , L_DONG_REGN_CD
+            , L_DONG_SIGNGU_CD
+            , MAPX
+            , MAPY
+            , VISIT_ORDER
+            , VISIT_DATE
+            , FIRSTIMAGE
+            , CREATED_AT
+            , UPDATED_AT
         FROM TRIP_DETAIL
         WHERE TRIP_ID = #{tripId}
-        ORDER BY VISIT_TIME ASC
+        ORDER BY VISIT_DATE, VISIT_ORDER ASC
     </select>
 
     <!-- 등록 (단건) -->
     <insert id="insertDetail" parameterType="com.trip.jeju.trip.vo.TripDetailVO" useGeneratedKeys="true" keyProperty="detailId">
         INSERT INTO TRIP_DETAIL (
-        TRIP_ID, CONTENT_ID, CONTENT_TYPE_ID, SPOT_NAME, CATEGORY,
-        ADDRESS, SIGUNGU_CD, LATITUDE, LONGITUDE, VISIT_TIME,
-        VISIT_DATE, ESTIMATED_STAY, THUMNAIL
+            TRIP_ID
+            , CONTENT_ID
+            , CONTENT_TYPE_ID
+            , TITLE
+            , TEL
+            , LC_LS_SYSTM1
+            , LC_LS_SYSTM2
+            , LC_LS_SYSTM3
+            , LC_LS_SYSTM1_NM
+            , LC_LS_SYSTM2_NM
+            , LC_LS_SYSTM3_NM
+            , ZIPCODE
+            , ADDR1
+            , ADDR2
+            , L_DONG_REGN_CD
+            , L_DONG_SIGNGU_CD
+            , MAPX
+            , MAPY
+            , VISIT_ORDER
+            , VISIT_DATE
+            , FIRSTIMAGE
         ) VALUES (
-        #{tripId}, #{contentId}, #{contentTypeId}, #{spotName}, #{category},
-        #{address}, #{sigunguCd}, #{latitude}, #{longitude}, #{visitTime},
-        #{visitDate}, #{estimatedStay}, #{thumnail}
+            #{tripId}
+            , #{contentid}
+            , #{contenttypeid}
+            , #{title}
+            , #{tel}
+            , #{lclsSystm1}
+            , #{lclsSystm2}
+            , #{lclsSystm3}
+            , #{lclsSystm1Nm}
+            , #{lclsSystm2Nm}
+            , #{lclsSystm3Nm}
+            , #{zipcode}
+            , #{addr1}
+            , #{addr2}
+            , #{lDongRegnCd}
+            , #{lDongSignguCd}
+            , #{mapx}
+            , #{mapy}
+            , #{visitOrder}
+            , #{visitDate}
+            , #{firstimage}
         )
     </insert>
 
     <!-- 수정 (단건) -->
     <update id="updateDetail" parameterType="com.trip.jeju.trip.vo.TripDetailVO">
-        UPDATE TRIP_DETAIL
-        SET CONTENT_ID = #{contentId},
-        CONTENT_TYPE_ID = #{contentTypeId},
-        SPOT_NAME = #{spotName},
-        CATEGORY = #{category},
-        ADDRESS = #{address},
-        SIGUNGU_CD = #{sigunguCd},
-        LATITUDE = #{latitude},
-        LONGITUDE = #{longitude},
-        VISIT_TIME = #{visitTime},
-        VISIT_DATE = #{visitDate},
-        ESTIMATED_STAY = #{estimatedStay},
-        THUMNAIL = #{thumnail}
+        UPDATE TRIP_DETAIL SET
+            CONTENT_ID = #{contentid}
+            CONTENT_TYPE_ID = #{contenttypeid}
+            TITLE = #{title}
+            TEL = #{tel}
+            LC_LS_SYSTM1 = #{lclsSystm1}
+            LC_LS_SYSTM2 = #{lclsSystm2}
+            LC_LS_SYSTM3 = #{lclsSystm3}
+            LC_LS_SYSTM1_NM = #{lclsSystm1Nm}
+            LC_LS_SYSTM2_NM = #{lclsSystm2Nm}
+            LC_LS_SYSTM3_NM = #{lclsSystm3Nm}
+            ZIPCODE = #{zipcode}
+            ADDR1 = #{addr1}
+            ADDR2 = #{addr2}
+            L_DONG_REGN_CD = #{lDongRegnCd}
+            L_DONG_SIGNGU_CD = #{lDongSignguCd}
+            MAPX = #{mapx}
+            MAPY = #{mapy}
+            VISIT_ORDER = #{visitOrder}
+            VISIT_DATE = #{visitDate}
+            FIRSTIMAGE  #{firstimage}
         WHERE DETAIL_ID = #{detailId}
     </update>
 

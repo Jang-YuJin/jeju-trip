@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class DetailReqVO {
 
-    private String contentId;
-    private String contentTypeId;
+    private String contentid;
+    private String contenttypeid;
 
 }
