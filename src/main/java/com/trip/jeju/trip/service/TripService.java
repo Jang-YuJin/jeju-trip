@@ -27,7 +27,7 @@ public class TripService {
         int totalCount = tripMapper.selectTripCount(reqVO);
 
         log.info("TRIP 목록 조회 - pageNo: {}, spotName: {}, category: {}, totalCount: {}",
-                reqVO.getPageNo(), reqVO.getSpotName(), reqVO.getCategory(), totalCount);
+                reqVO.getPageNo(), reqVO.getSpotName(), totalCount);
 
         return new PageResVO<>(list, totalCount, reqVO.getPageNo(), reqVO.getNumOfRows());
     }
