@@ -1,5 +1,6 @@
 package com.trip.jeju.trip.service;
 
+import com.trip.jeju.auth.jwt.JwtProvider;
 import com.trip.jeju.common.util.SecurityUtil;
 import com.trip.jeju.common.vo.PageResVO;
 import com.trip.jeju.trip.mapper.TripMapper;

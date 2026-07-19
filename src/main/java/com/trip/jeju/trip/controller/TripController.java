@@ -8,11 +8,13 @@ import com.trip.jeju.trip.vo.TripSearchReqVO;
 import com.trip.jeju.trip.vo.TripVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +31,10 @@ public class TripController {
     @GetMapping
     public ResponseEntity<ApiResponse<PageResVO<TripVO>>> getTripList(
             @ParameterObject @ModelAttribute TripSearchReqVO reqVO) {
+        Integer userId = (Integer) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        reqVO.setUserId(userId);
         return ResponseEntity.ok(ApiResponse.ok(tripService.getTripList(reqVO)));
     }
 
@@ -40,7 +46,9 @@ public class TripController {
 
     @Operation(summary = "여행 생성", description = "여행을 생성합니다.")
     @PostMapping
-    public ResponseEntity<ApiResponse<Integer>> createTrip(@RequestBody TripSaveReqVO reqVO) {
+    public ResponseEntity<ApiResponse<Integer>> createTrip(
+            @RequestBody(description = "여행 생성 정보", required = true)
+            @org.springframework.web.bind.annotation.RequestBody TripSaveReqVO reqVO) {
         Integer tripId = tripService.createTrip(reqVO);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(tripId));
     }
@@ -48,15 +56,17 @@ public class TripController {
     @Operation(summary = "여행 수정", description = "여행을 수정합니다.")
     @PutMapping("/{tripId}")
     public ResponseEntity<ApiResponse<Void>> updateTrip(
-            @PathVariable Integer tripId,
-            @RequestBody TripSaveReqVO reqVO) {
+            @Parameter(description = "여행 ID", example = "1") @PathVariable Integer tripId,
+            @RequestBody(description = "여행 수정 정보", required = true)
+            @org.springframework.web.bind.annotation.RequestBody TripSaveReqVO reqVO) {
         tripService.updateTrip(tripId, reqVO);
         return ResponseEntity.ok(ApiResponse.ok(null));
     }
 
     @Operation(summary = "여행 삭제", description = "여행을 삭제합니다.")
     @DeleteMapping("/{tripId}")
-    public ResponseEntity<ApiResponse<Void>> deleteTrip(@PathVariable Integer tripId) {
+    public ResponseEntity<ApiResponse<Void>> deleteTrip(
+            @Parameter(description = "여행 ID", example = "1") @PathVariable Integer tripId) {
         tripService.deleteTrip(tripId);
         return ResponseEntity.ok(ApiResponse.ok(null));
     }
