@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.trip.jeju.trip.mapper.SearchHistoryMapper">
+
+    <insert id="insertSearchHistory"
+            parameterType="com.trip.jeju.trip.vo.SearchHistoryVO">
+
+        INSERT INTO SEARCH_HISTORY (
+        USER_ID,
+        CONTENT_ID,
+        CONTENT_TYPE_ID,
+        SPOT_NAME,
+        ADDRESS,
+        L_DONG_REGN_CD,
+        L_DONG_SIGNGU_CD,
+        LC_LS_SYSTM1,
+        LC_LS_SYSTM2,
+        LC_LS_SYSTM3,
+        LATITUDE,
+        LONGITUDE,
+        THUMBNAIL,
+        CREATED_AT,
+        UPDATED_AT
+        )
+        VALUES (
+        #{userId},
+        #{contentId},
+        #{contentTypeId},
+        #{spotName},
+        #{address},
+        #{lDongRegnCd},
+        #{lDongSignguCd},
+        #{lclsSystm1},
+        #{lclsSystm2},
+        #{lclsSystm3},
+        #{latitude},
+        #{longitude},
+        #{thumbnail},
+        NOW(),
+        NOW()
+        )
+
+    </insert>
+
+</mapper>

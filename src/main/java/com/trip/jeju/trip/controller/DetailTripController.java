@@ -8,6 +8,7 @@ import com.trip.jeju.trip.vo.DetailIntroResVO;
 import com.trip.jeju.trip.vo.DetailReqVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -51,15 +52,24 @@ public class DetailTripController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<DetailAllResVO>> detail(
-            @ModelAttribute DetailReqVO detailReqVO
+            @ModelAttribute DetailReqVO detailReqVO,
+            Authentication authentication
     ) {
         Map<String, Object> params = new HashMap<>();
         params.put("contentId", detailReqVO.getContentid());
         params.put("contentTypeId", detailReqVO.getContenttypeid());
 
+        // JWT 인증된 사용자인 경우 principal에 userId(Integer)가 들어있음
+        Integer userId = null;
+
+        if (authentication != null
+                && authentication.getPrincipal() instanceof Integer) {
+            userId = (Integer) authentication.getPrincipal();
+        }
+
         return ResponseEntity.ok(
                 ApiResponse.ok(
-                        detailTripService.detailAll(params)
+                        detailTripService.detailAll(params, userId)
                 )
         );
     }
