@@ -26,22 +26,20 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        SecurityScheme apiKey = new SecurityScheme()
+        SecurityScheme securityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
-                .in(SecurityScheme.In.HEADER)
-                .name("Authorization")
                 .scheme("bearer")
                 .bearerFormat("JWT");
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
-                .addList("Bearer Token");
+                .addList("JWT_Auth_Token");
 
         return new OpenAPI()
                 .info(new Info()
                         .title("API 명세서")
                         .description("프로젝트 API 문서 및 테스트 화면")
                         .version("v1.0.0"))
-                .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
+                .components(new Components().addSecuritySchemes("JWT_Auth_Token", securityScheme))
                 .addSecurityItem(securityRequirement);
     }
 }

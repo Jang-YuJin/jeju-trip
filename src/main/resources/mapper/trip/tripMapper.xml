@@ -5,7 +5,8 @@
     <!-- 검색조건 공통 부분 (재사용) -->
     <sql id="searchCondition">
         <if test="spotName != null and spotName != ''">
-            AND d.SPOT_NAME LIKE CONCAT('%', #{spotName}, '%')
+            AND t.TRIP_NAME LIKE CONCAT('%', #{spotName}, '%')
+            AND t.USER_ID = #{userId}
         </if>
     </sql>
 
@@ -38,6 +39,7 @@
         IS_AI_ROUTE, SHARE_CODE, CREATED_AT, UPDATED_AT
         FROM TRIP
         WHERE TRIP_ID = #{tripId}
+        AND USER_ID = #{userId}
     </select>
 
     <insert id="insertTrip" parameterType="com.trip.jeju.trip.vo.TripVO" useGeneratedKeys="true" keyProperty="tripId">
