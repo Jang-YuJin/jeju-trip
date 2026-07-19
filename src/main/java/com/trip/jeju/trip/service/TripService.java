@@ -1,5 +1,6 @@
 package com.trip.jeju.trip.service;
 
+import com.trip.jeju.auth.jwt.JwtProvider;
 import com.trip.jeju.common.util.SecurityUtil;
 import com.trip.jeju.common.vo.PageResVO;
 import com.trip.jeju.trip.mapper.TripMapper;
@@ -27,7 +28,7 @@ public class TripService {
         int totalCount = tripMapper.selectTripCount(reqVO);
 
         log.info("TRIP 목록 조회 - pageNo: {}, spotName: {}, category: {}, totalCount: {}",
-                reqVO.getPageNo(), reqVO.getSpotName(), reqVO.getCategory(), totalCount);
+                reqVO.getPageNo(), reqVO.getSpotName(), totalCount);
 
         return new PageResVO<>(list, totalCount, reqVO.getPageNo(), reqVO.getNumOfRows());
     }
