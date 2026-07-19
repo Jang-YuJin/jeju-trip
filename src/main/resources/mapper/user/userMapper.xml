@@ -21,4 +21,12 @@
         VALUES (#{email}, #{nickname}, #{name}, #{passwordHash},
                 #{authProvider}, #{socialId}, #{role}, #{img})
     </insert>
+
+    <select id="findByProviderAndSocialId" resultType="com.trip.jeju.auth.vo.UserVO">
+        SELECT ID, EMAIL, NICKNAME, NAME, PASSWORD_HASH,
+               AUTH_PROVIDER, SOCIAL_ID, ROLE, IMG, CREATED_AT, UPDATED_AT
+        FROM USER
+        WHERE AUTH_PROVIDER = #{authProvider}
+          AND SOCIAL_ID = #{socialId}
+    </select>
 </mapper>
