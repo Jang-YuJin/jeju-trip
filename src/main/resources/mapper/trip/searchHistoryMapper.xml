@@ -45,4 +45,22 @@
 
     </insert>
 
+
+    <select id="selectRecentSearchHistory"
+            resultType="com.trip.jeju.trip.vo.SearchHistoryResVO">
+
+        SELECT
+        HISTORY_ID AS historyId,
+        CONTENT_ID AS contentId,
+        CONTENT_TYPE_ID AS contentTypeId,
+        SPOT_NAME AS spotName,
+        ADDRESS AS address,
+        THUMBNAIL AS thumbnail,
+        CREATED_AT AS createdAt
+        FROM SEARCH_HISTORY
+        WHERE USER_ID = #{userId}
+        ORDER BY CREATED_AT DESC
+
+    </select>
+
 </mapper>
