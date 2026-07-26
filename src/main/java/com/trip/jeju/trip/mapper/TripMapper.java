@@ -12,7 +12,7 @@ import java.util.List;
 public interface TripMapper {
     List<TripVO> selectTripList(TripSearchReqVO reqVO);
     int selectTripCount(TripSearchReqVO reqVO);
-    TripVO selectTripById(@Param("tripId") Integer tripId);
+    TripVO selectTripById(@Param("tripId") Integer tripId, @Param("userId") Integer userId);
     void insertTrip(TripVO tripVO);
     void updateTrip(TripVO tripVO);
     void deleteTrip(@Param("tripId") Integer tripId);

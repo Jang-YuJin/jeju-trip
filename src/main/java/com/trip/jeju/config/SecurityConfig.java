@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/trip/**").authenticated()
                         .requestMatchers("/search-history/**").authenticated()
+                        .requestMatchers("/favorite/**").authenticated()
                         .requestMatchers(
                                 "/swagger",
                                 "/swagger-ui.html",
