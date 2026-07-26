@@ -34,7 +34,7 @@ public class TripService {
     }
 
     public TripVO getTripDetail(Integer tripId) {
-        TripVO trip = tripMapper.selectTripById(tripId);
+        TripVO trip = tripMapper.selectTripById(tripId, SecurityUtil.getCurrentUserId());
 
         if (trip == null) {
             throw new IllegalArgumentException("존재하지 않는 여행입니다. tripId: " + tripId);
@@ -82,7 +82,7 @@ public class TripService {
     @Transactional
     public void updateTrip(Integer tripId, TripSaveReqVO reqVO) {
 
-        TripVO existingTrip = tripMapper.selectTripById(tripId);
+        TripVO existingTrip = tripMapper.selectTripById(tripId, SecurityUtil.getCurrentUserId());
         if (existingTrip == null) {
             throw new IllegalArgumentException("존재하지 않는 여행입니다. tripId: " + tripId);
         }
@@ -117,7 +117,7 @@ public class TripService {
 
     @Transactional
     public void deleteTrip(Integer tripId) {
-        TripVO trip = tripMapper.selectTripById(tripId);
+        TripVO trip = tripMapper.selectTripById(tripId, SecurityUtil.getCurrentUserId());
         if (trip == null) {
             throw new IllegalArgumentException("존재하지 않는 여행입니다. tripId: " + tripId);
         }

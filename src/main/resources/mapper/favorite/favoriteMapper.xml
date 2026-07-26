@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trip.jeju.favorite.mapper.FavoriteMapper">
+    <select id="selectFavoriteList" resultType="com.trip.jeju.favorite.vo.FavoriteVO">
+        SELECT
+            FAVORITE_ID,
+            USER_ID,
+            CONTENT_ID,
+            CONTENT_TYPE_ID,
+            SPOT_NAME,
+            ADDRESS,
+            L_DONG_REGN_CD,
+            L_DONG_SIGNGU_CD,
+            LC_LS_SYSTM1,
+            LC_LS_SYSTM2,
+            LC_LS_SYSTM3,
+            LATITUDE,
+            LONGITUDE,
+            THUMBNAIL
+        FROM FAVORITE
+        WHERE USER_ID = #{userId}
+        ORDER BY CREATED_AT DESC
+        LIMIT #{offset}, #{numOfRows}
+    </select>
+
+    <select id="selectFavoriteCount" resultType="int">
+        SELECT COUNT(*)
+        FROM FAVORITE
+        WHERE USER_ID = #{userId}
+    </select>
+
+    <select id="selectFavoriteById" resultType="com.trip.jeju.favorite.vo.FavoriteVO">
+        SELECT
+            FAVORITE_ID,
+            USER_ID,
+            CONTENT_ID,
+            CONTENT_TYPE_ID,
+            SPOT_NAME,
+            ADDRESS,
+            L_DONG_REGN_CD,
+            L_DONG_SIGNGU_CD,
+            LC_LS_SYSTM1,
+            LC_LS_SYSTM2,
+            LC_LS_SYSTM3,
+            LATITUDE,
+            LONGITUDE,
+            THUMBNAIL
+        FROM FAVORITE
+        WHERE USER_ID = #{userId}
+        AND FAVORITE_ID = #{favoriteId}
+    </select>
+
+    <insert id="createFavorite" parameterType="com.trip.jeju.favorite.vo.FavoriteVO">
+        INSERT INTO FAVORITE (
+            USER_ID,
+            CONTENT_ID,
+            CONTENT_TYPE_ID,
+            SPOT_NAME,
+            ADDRESS,
+            L_DONG_REGN_CD,
+            L_DONG_SIGNGU_CD,
+            LC_LS_SYSTM1,
+            LC_LS_SYSTM2,
+            LC_LS_SYSTM3,
+            LATITUDE,
+            LONGITUDE,
+            THUMBNAIL
+        ) VALUES (
+            #{userId},
+            #{contentId},
+            #{contentTypeId},
+            #{spotName},
+            #{address},
+            #{ldongRegnCd},
+            #{ldongSignguCd},
+            #{lclsSystm1},
+            #{lclsSystm2},
+            #{lclsSystm3},
+            #{latitude},
+            #{longitude},
+            #{thumbnail}
+        )
+    </insert>
+
+    <delete id="deleteFavorite">
+        DELETE FROM FAVORITE WHERE FAVORITE_ID = #{favoriteId}
+    </delete>
+</mapper>
