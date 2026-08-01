@@ -14,4 +14,5 @@ public interface FavoriteMapper {
     int selectFavoriteCount(FavoriteSearchReq reqVO);
     void deleteFavorite(@Param("favoriteId") Integer favoriteId);
     FavoriteVO selectFavoriteById(@Param("favoriteId") Integer favoriteId, @Param("userId") Integer userId);
+    List<FavoriteVO> selectMainFavoriteList(Integer userId);
 }

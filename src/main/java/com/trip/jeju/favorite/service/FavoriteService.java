@@ -30,6 +30,8 @@ public class FavoriteService {
     }
 
     public PageResVO<FavoriteVO> getFavoriteList(FavoriteSearchReq reqVO) {
+        Integer userId = SecurityUtil.getCurrentUserId();
+        reqVO.setUserId(userId);
         List<FavoriteVO> list = favoriteMapper.selectFavoriteList(reqVO);
         int totalCount = favoriteMapper.selectFavoriteCount(reqVO);
 
@@ -46,5 +48,10 @@ public class FavoriteService {
         favoriteMapper.deleteFavorite(favoriteId);
 
         log.info("즐겨찾기 삭제 완료 - favoriteId: {}", favoriteId);
+    }
+
+    public List<FavoriteVO> getMainFavoriteList() {
+        Integer userId = SecurityUtil.getCurrentUserId();
+        return favoriteMapper.selectMainFavoriteList(userId);
     }
 }

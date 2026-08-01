@@ -85,4 +85,26 @@
     <delete id="deleteFavorite">
         DELETE FROM FAVORITE WHERE FAVORITE_ID = #{favoriteId}
     </delete>
+
+    <select id="selectMainFavoriteList" resultType="com.trip.jeju.favorite.vo.FavoriteVO">
+        SELECT
+        FAVORITE_ID,
+        USER_ID,
+        CONTENT_ID,
+        CONTENT_TYPE_ID,
+        SPOT_NAME,
+        ADDRESS,
+        L_DONG_REGN_CD,
+        L_DONG_SIGNGU_CD,
+        LC_LS_SYSTM1,
+        LC_LS_SYSTM2,
+        LC_LS_SYSTM3,
+        LATITUDE,
+        LONGITUDE,
+        THUMBNAIL
+        FROM FAVORITE
+        WHERE USER_ID = #{userId}
+        ORDER BY CREATED_AT DESC
+        LIMIT 4
+    </select>
 </mapper>
