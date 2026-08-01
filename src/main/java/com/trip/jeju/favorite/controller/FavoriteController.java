@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "favorite API", description = "즐겨찾기 관련 API")
 @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "JWT_Auth_Token")
 @RestController
@@ -45,5 +47,11 @@ public class FavoriteController {
             @Parameter(description = "즐겨찾기 ID", example = "1") @PathVariable Integer favoriteId) {
         favoriteService.deleteFavorite(favoriteId);
         return ResponseEntity.ok(ApiResponse.ok(null));
+    }
+
+    @Operation(summary = "즐겨찾기 메인 목록 조회", description = "로그인한 회원 아이디로 메인에 즐겨찾기 목록을 조회합니다.(최신순으로 4개 조회)")
+    @GetMapping(value = "/main")
+    public ResponseEntity<ApiResponse<List<FavoriteVO>>> getMainFavoriteList() {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(favoriteService.getMainFavoriteList()));
     }
 }
