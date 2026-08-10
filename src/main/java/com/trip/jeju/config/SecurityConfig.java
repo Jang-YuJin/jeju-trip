@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/trip/**").authenticated()
                         .requestMatchers("/search-history/**").authenticated()
                         .requestMatchers("/favorite/**").authenticated()
+                        .requestMatchers("/user/**").authenticated()
                         .requestMatchers(
                                 "/swagger",
                                 "/swagger-ui.html",
