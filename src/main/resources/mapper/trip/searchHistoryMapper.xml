@@ -5,6 +5,7 @@
 
 <mapper namespace="com.trip.jeju.trip.mapper.SearchHistoryMapper">
 
+    <!-- 검색 기록 신규 저장 -->
     <insert id="insertSearchHistory"
             parameterType="com.trip.jeju.trip.vo.SearchHistoryVO">
 
@@ -46,20 +47,78 @@
     </insert>
 
 
+    <!-- 동일 사용자가 동일 관광지를 조회한 기록이 있는지 확인 -->
+    <select id="countSearchHistory"
+            resultType="int">
+
+        SELECT COUNT(*)
+        FROM SEARCH_HISTORY
+        WHERE USER_ID = #{userId}
+        AND CONTENT_ID = #{contentId}
+
+    </select>
+
+
+    <!-- 기존 검색 기록 중 가장 최근 기록 1개 갱신 -->
+    <update id="updateSearchHistory"
+            parameterType="com.trip.jeju.trip.vo.SearchHistoryVO">
+
+        UPDATE SEARCH_HISTORY
+        SET
+        CONTENT_TYPE_ID = #{contentTypeId},
+        SPOT_NAME = #{spotName},
+        ADDRESS = #{address},
+        L_DONG_REGN_CD = #{lDongRegnCd},
+        L_DONG_SIGNGU_CD = #{lDongSignguCd},
+        LC_LS_SYSTM1 = #{lclsSystm1},
+        LC_LS_SYSTM2 = #{lclsSystm2},
+        LC_LS_SYSTM3 = #{lclsSystm3},
+        LATITUDE = #{latitude},
+        LONGITUDE = #{longitude},
+        THUMBNAIL = #{thumbnail},
+        UPDATED_AT = NOW()
+        WHERE USER_ID = #{userId}
+        AND CONTENT_ID = #{contentId}
+        ORDER BY UPDATED_AT DESC, HISTORY_ID DESC
+        LIMIT 1
+
+    </update>
+
+
+    <!--
+        최근 조회한 장소 조회
+        - 동일 CONTENT_ID 중 가장 최근 기록 1개만 조회
+        - 최근 조회 순으로 정렬
+        - 최대 10개
+    -->
     <select id="selectRecentSearchHistory"
             resultType="com.trip.jeju.trip.vo.SearchHistoryResVO">
 
         SELECT
-        HISTORY_ID AS historyId,
-        CONTENT_ID AS contentId,
-        CONTENT_TYPE_ID AS contentTypeId,
-        SPOT_NAME AS spotName,
-        ADDRESS AS address,
-        THUMBNAIL AS thumbnail,
-        CREATED_AT AS createdAt
-        FROM SEARCH_HISTORY
-        WHERE USER_ID = #{userId}
-        ORDER BY CREATED_AT DESC
+        SH.HISTORY_ID AS historyId,
+        SH.CONTENT_ID AS contentId,
+        SH.CONTENT_TYPE_ID AS contentTypeId,
+        SH.SPOT_NAME AS spotName,
+        SH.ADDRESS AS address,
+        SH.THUMBNAIL AS thumbnail,
+        SH.UPDATED_AT AS createdAt
+        FROM SEARCH_HISTORY SH
+        WHERE SH.USER_ID = #{userId}
+        AND NOT EXISTS (
+        SELECT 1
+        FROM SEARCH_HISTORY SH2
+        WHERE SH2.USER_ID = SH.USER_ID
+        AND SH2.CONTENT_ID = SH.CONTENT_ID
+        AND (
+        SH2.UPDATED_AT > SH.UPDATED_AT
+        OR (
+        SH2.UPDATED_AT = SH.UPDATED_AT
+        AND SH2.HISTORY_ID > SH.HISTORY_ID
+        )
+        )
+        )
+        ORDER BY SH.UPDATED_AT DESC, SH.HISTORY_ID DESC
+        LIMIT 10
 
     </select>
 

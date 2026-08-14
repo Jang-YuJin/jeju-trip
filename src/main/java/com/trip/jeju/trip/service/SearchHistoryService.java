@@ -15,7 +15,17 @@ public class SearchHistoryService {
     private final SearchHistoryMapper searchHistoryMapper;
 
     public void saveSearchHistory(SearchHistoryVO searchHistoryVO) {
-        searchHistoryMapper.insertSearchHistory(searchHistoryVO);
+
+        int count = searchHistoryMapper.countSearchHistory(
+                searchHistoryVO.getUserId(),
+                searchHistoryVO.getContentId()
+        );
+
+        if (count > 0) {
+            searchHistoryMapper.updateSearchHistory(searchHistoryVO);
+        } else {
+            searchHistoryMapper.insertSearchHistory(searchHistoryVO);
+        }
     }
 
     public List<SearchHistoryResVO> getRecentSearchHistory(Integer userId) {
