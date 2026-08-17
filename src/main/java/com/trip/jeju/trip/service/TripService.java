@@ -33,6 +33,26 @@ public class TripService {
         return new PageResVO<>(list, totalCount, reqVO.getPageNo(), reqVO.getNumOfRows());
     }
 
+    public PageResVO<TripVO> getTripListNext(TripSearchReqVO reqVO) {
+        List<TripVO> list = tripMapper.selectTripListNext(reqVO);
+        int totalCount = tripMapper.selectTripCountNest(reqVO);
+
+        log.info("TRIP 목록 조회(진행 예정) - pageNo: {}, spotName: {}, category: {}, totalCount: {}",
+                reqVO.getPageNo(), reqVO.getSpotName(), totalCount);
+
+        return new PageResVO<>(list, totalCount, reqVO.getPageNo(), reqVO.getNumOfRows());
+    }
+
+    public PageResVO<TripVO> getTripListPre(TripSearchReqVO reqVO) {
+        List<TripVO> list = tripMapper.selectTripListPre(reqVO);
+        int totalCount = tripMapper.selectTripCountPre(reqVO);
+
+        log.info("TRIP 목록 조회(지난 여행) - pageNo: {}, spotName: {}, category: {}, totalCount: {}",
+                reqVO.getPageNo(), reqVO.getSpotName(), totalCount);
+
+        return new PageResVO<>(list, totalCount, reqVO.getPageNo(), reqVO.getNumOfRows());
+    }
+
     public TripVO getTripDetail(Integer tripId) {
         TripVO trip = tripMapper.selectTripById(tripId, SecurityUtil.getCurrentUserId());
 

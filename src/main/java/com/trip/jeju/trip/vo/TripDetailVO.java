@@ -69,10 +69,10 @@ public class TripDetailVO {
     private String lclsSystm3Nm;
 
     @Schema(description = "법정동 시도코드", example = "")
-    private String lDongRegnCd;
+    private String ldongRegnCd;
 
     @Schema(description = "법정동 시군구코드", example = "")
-    private String lDongSignguCd;
+    private String ldongSignguCd;
 
     @Schema(description = "방문순서", example = "")
     private String visitOrder;
