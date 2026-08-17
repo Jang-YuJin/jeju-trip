@@ -13,4 +13,5 @@ public class TripReqVO {
     private String mapX;
     private String mapY;
     private String radius;
+    private String baseYmd;
 }

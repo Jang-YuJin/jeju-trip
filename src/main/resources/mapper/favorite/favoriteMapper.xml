@@ -105,6 +105,6 @@
         FROM FAVORITE
         WHERE USER_ID = #{userId}
         ORDER BY CREATED_AT DESC
-        LIMIT 4
+        LIMIT 3
     </select>
 </mapper>

@@ -6,8 +6,8 @@
     <sql id="searchCondition">
         <if test="spotName != null and spotName != ''">
             AND t.TRIP_NAME LIKE CONCAT('%', #{spotName}, '%')
-            AND t.USER_ID = #{userId}
         </if>
+        AND t.USER_ID = #{userId}
     </sql>
 
     <!-- 목록 조회 (페이징 + 검색조건) -->
@@ -16,9 +16,8 @@
         t.TRIP_ID, t.USER_ID, t.TRIP_NAME, t.START_DATE, t.END_DATE,
         t.IS_AI_ROUTE, t.SHARE_CODE, t.CREATED_AT, t.UPDATED_AT
         FROM TRIP t
-        <where>
-            <include refid="searchCondition"/>
-        </where>
+        WHERE 1=1
+        <include refid="searchCondition"/>
         ORDER BY t.CREATED_AT DESC
         LIMIT #{offset}, #{numOfRows}
     </select>
@@ -27,9 +26,52 @@
     <select id="selectTripCount" resultType="int">
         SELECT COUNT(DISTINCT t.TRIP_ID)
         FROM TRIP t
-        <where>
-            <include refid="searchCondition"/>
-        </where>
+        WHERE 1=1
+        <include refid="searchCondition"/>
+    </select>
+
+    <!-- 목록 조회 (페이징 + 검색조건) -->
+    <select id="selectTripListNext" resultType="com.trip.jeju.trip.vo.TripVO">
+        SELECT DISTINCT
+        t.TRIP_ID, t.USER_ID, t.TRIP_NAME, t.START_DATE, t.END_DATE,
+        t.IS_AI_ROUTE, t.SHARE_CODE, t.CREATED_AT, t.UPDATED_AT
+        FROM TRIP t
+        WHERE 1=1
+        <include refid="searchCondition"/>
+        AND t.START_DATE <![CDATA[>]]> SYSDATE()
+        ORDER BY t.CREATED_AT DESC
+        LIMIT #{offset}, #{numOfRows}
+    </select>
+
+    <!-- 검색조건에 맞는 전체 개수 -->
+    <select id="selectTripCountNest" resultType="int">
+        SELECT COUNT(DISTINCT t.TRIP_ID)
+        FROM TRIP t
+        WHERE 1=1
+        <include refid="searchCondition"/>
+        AND t.START_DATE <![CDATA[>]]> SYSDATE()
+    </select>
+
+    <!-- 목록 조회 (페이징 + 검색조건) -->
+    <select id="selectTripListPre" resultType="com.trip.jeju.trip.vo.TripVO">
+        SELECT DISTINCT
+        t.TRIP_ID, t.USER_ID, t.TRIP_NAME, t.START_DATE, t.END_DATE,
+        t.IS_AI_ROUTE, t.SHARE_CODE, t.CREATED_AT, t.UPDATED_AT
+        FROM TRIP t
+        WHERE 1=1
+        <include refid="searchCondition"/>
+        AND t.START_DATE <![CDATA[<=]]> SYSDATE()
+        ORDER BY t.CREATED_AT DESC
+        LIMIT #{offset}, #{numOfRows}
+    </select>
+
+    <!-- 검색조건에 맞는 전체 개수 -->
+    <select id="selectTripCountPre" resultType="int">
+        SELECT COUNT(DISTINCT t.TRIP_ID)
+        FROM TRIP t
+        WHERE 1=1
+        <include refid="searchCondition"/>
+        AND t.START_DATE <![CDATA[<=]]> SYSDATE()
     </select>
 
     <!-- 단건 조회 -->
@@ -135,8 +177,8 @@
             , #{zipcode}
             , #{addr1}
             , #{addr2}
-            , #{lDongRegnCd}
-            , #{lDongSignguCd}
+            , #{ldongRegnCd}
+            , #{ldongSignguCd}
             , #{mapx}
             , #{mapy}
             , #{visitOrder}
@@ -161,8 +203,8 @@
             ZIPCODE = #{zipcode}
             ADDR1 = #{addr1}
             ADDR2 = #{addr2}
-            L_DONG_REGN_CD = #{lDongRegnCd}
-            L_DONG_SIGNGU_CD = #{lDongSignguCd}
+            L_DONG_REGN_CD = #{ldongRegnCd}
+            L_DONG_SIGNGU_CD = #{ldongSignguCd}
             MAPX = #{mapx}
             MAPY = #{mapy}
             VISIT_ORDER = #{visitOrder}

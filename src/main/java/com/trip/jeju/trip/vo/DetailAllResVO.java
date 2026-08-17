@@ -1,5 +1,6 @@
 package com.trip.jeju.trip.vo;
 
+import com.trip.jeju.congestion.vo.CongestionVO;
 import lombok.*;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public class DetailAllResVO {
     private DetailIntroResVO intro;
     private List<DetailInfoResVO> info;
     private List<DetailImageResVO> image;
+    private CongestionVO congestion;
 }

@@ -1,6 +1,7 @@
 package com.trip.jeju.favorite.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.trip.jeju.congestion.vo.CongestionVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -54,4 +55,7 @@ public class FavoriteVO {
 
     @Schema(description = "사용자 ID(백단에서 세팅되도록 할 것임으로 넣어줄 필요 X)", example = "")
     private String userId;
+
+    @Schema(description = "혼잡도 정보", example = "")
+    private CongestionVO congestion;
 }

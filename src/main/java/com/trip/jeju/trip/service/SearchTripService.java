@@ -1,5 +1,7 @@
 package com.trip.jeju.trip.service;
 
+import com.trip.jeju.congestion.service.CongestionService;
+import com.trip.jeju.congestion.vo.CongestionVO;
 import com.trip.jeju.trip.vo.TripResVO;
 import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +24,7 @@ import java.util.Map;
 public class SearchTripService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final CongestionService congestionService;
 
     @Value("${ks.key}")
     private String key;
@@ -46,7 +50,9 @@ public class SearchTripService {
                 .queryParam("lDongRegnCd", lDongRegnCd)
                 .queryParam("_type", "json");
 
-        params.forEach(builder::queryParam);
+        params.entrySet().stream()
+                .filter(entry -> !"baseYmd".equals(entry.getKey()))
+                .forEach(entry -> builder.queryParam(entry.getKey(), entry.getValue()));
 
         String url = builder.build(false).toUriString();
         log.info("한국관광공사_국문 관광정보 서비스_GW - url: {}", url);
@@ -82,7 +88,7 @@ public class SearchTripService {
 
             List<TripResVO> result = new ArrayList<>();
             for (JsonNode item : items) {
-                result.add(toTripResVO(item));
+                result.add(toTripResVO(item, params.get("baseYmd")));
             }
 
             log.info("한국관광공사_국문 관광정보 서비스_GW API 조회 완료 - {}건", result.size());
@@ -94,7 +100,7 @@ public class SearchTripService {
         }
     }
 
-    private TripResVO toTripResVO(JsonNode item) {
+    private TripResVO toTripResVO(JsonNode item, Object baseYmd) {
         try {
             String url = UriComponentsBuilder
                     .fromUriString(baseUrl + "/lclsSystmCode2")
@@ -138,6 +144,15 @@ public class SearchTripService {
                 return null;
             }
 
+            Map<String, Object> params = new HashMap<>();
+            params.put("areaCd", item.path("lDongRegnCd").asText());
+            params.put("signguCd", item.path("lDongSignguCd").asText());
+            params.put("tAtsNm", item.path("title").asText());
+            if(baseYmd != null && !"".equals(baseYmd)){
+                params.put("baseYmd", baseYmd);
+            }
+            CongestionVO congestion = congestionService.getCongestion(params);
+
             return TripResVO.builder()
                     .contentid(item.path("contentid").asText())
                     .contenttypeid(item.path("contenttypeid").asText())
@@ -155,8 +170,9 @@ public class SearchTripService {
                     .lclsSystm1Nm(items.get(0).path("lclsSystm1Nm").asText())
                     .lclsSystm2Nm(items.get(0).path("lclsSystm2Nm").asText())
                     .lclsSystm3Nm(items.get(0).path("lclsSystm3Nm").asText())
-                    .lDongRegnCd(items.get(0).path("lDongRegnCd").asText())
-                    .lDongSignguCd(items.get(0).path("lDongSignguCd").asText())
+                    .lDongRegnCd(item.path("lDongRegnCd").asText())
+                    .lDongSignguCd(item.path("lDongSignguCd").asText())
+                    .congestion(congestion)
                     .build();
         } catch (Exception e) {
             log.error("한국관광공사_국문 관광정보 서비스_GW 분류체계 코드조회 API 호출 실패 - {}", e.getMessage());

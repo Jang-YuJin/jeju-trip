@@ -1,5 +1,6 @@
 package com.trip.jeju.trip.vo;
 
+import com.trip.jeju.congestion.vo.CongestionVO;
 import lombok.*;
 
 @Getter
@@ -26,4 +27,5 @@ public class TripResVO {
     private String lclsSystm3Nm;
     private String lDongRegnCd;
     private String lDongSignguCd;
+    private CongestionVO congestion;
 }

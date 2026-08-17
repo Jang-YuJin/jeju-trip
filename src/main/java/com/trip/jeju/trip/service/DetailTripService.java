@@ -1,5 +1,6 @@
 package com.trip.jeju.trip.service;
 
+import com.trip.jeju.congestion.service.CongestionService;
 import com.trip.jeju.trip.vo.DetailAllResVO;
 import com.trip.jeju.trip.vo.DetailCommonResVO;
 import com.trip.jeju.trip.vo.DetailImageResVO;
@@ -29,6 +30,7 @@ public class DetailTripService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final SearchHistoryService searchHistoryService;
+    private final CongestionService congestionService;
 
     @Value("${ks.key}")
     private String key;
@@ -471,6 +473,12 @@ public class DetailTripService {
                 params.get("contentId")
         );
 
+        Map<String, Object> congestionParams = new HashMap<>();
+        congestionParams.put("areaCd", params.get("areaCd"));
+        congestionParams.put("tAtsNm", params.get("tAtsNm"));
+        congestionParams.put("signguCd", params.get("signguCd"));
+        congestionParams.put("baseYmd", params.get("baseYmd"));
+
         // 공통정보는 Search History 저장에도 사용
         DetailCommonResVO common =
                 detailCommon(commonParams);
@@ -486,7 +494,7 @@ public class DetailTripService {
                         )
                         .image(
                                 detailImage(imageParams)
-                        )
+                        ).congestion(congestionService.getCongestion(congestionParams))
                         .build();
 
         /*

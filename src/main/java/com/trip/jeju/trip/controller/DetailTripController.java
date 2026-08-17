@@ -75,6 +75,10 @@ public class DetailTripController {
         Map<String, Object> params = new HashMap<>();
         params.put("contentId", detailReqVO.getContentid());
         params.put("contentTypeId", detailReqVO.getContenttypeid());
+        params.put("tAtsNm", detailReqVO.getSpotName());
+        params.put("areaCd", detailReqVO.getAreaCd());
+        params.put("signguCd", detailReqVO.getSignguCd());
+        params.put("baseYmd", detailReqVO.getBaseYmd());
 
         // JWT 인증된 사용자인 경우 principal에 userId(Integer)가 들어있음
         Integer userId = null;

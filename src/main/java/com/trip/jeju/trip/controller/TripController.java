@@ -27,7 +27,7 @@ import java.util.List;
 public class TripController {
     private final TripService tripService;
 
-    @Operation(summary = "여행 목록 조회", description = "로그인한 회원 아이디로 여행 목록을 조회합니다.")
+    @Operation(summary = "여행 목록 조회(전체)", description = "로그인한 회원 아이디로 여행 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<PageResVO<TripVO>>> getTripList(
             @ParameterObject @ModelAttribute TripSearchReqVO reqVO) {
@@ -36,6 +36,28 @@ public class TripController {
                 .getPrincipal();
         reqVO.setUserId(userId);
         return ResponseEntity.ok(ApiResponse.ok(tripService.getTripList(reqVO)));
+    }
+
+    @Operation(summary = "여행 목록 조회(진행 예정)", description = "로그인한 회원 아이디로 여행 목록을 조회합니다.")
+    @GetMapping(value = "/next")
+    public ResponseEntity<ApiResponse<PageResVO<TripVO>>> getTripListNext(
+            @ParameterObject @ModelAttribute TripSearchReqVO reqVO) {
+        Integer userId = (Integer) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        reqVO.setUserId(userId);
+        return ResponseEntity.ok(ApiResponse.ok(tripService.getTripListNext(reqVO)));
+    }
+
+    @Operation(summary = "여행 목록 조회(지난 여행)", description = "로그인한 회원 아이디로 여행 목록을 조회합니다.")
+    @GetMapping(value = "/pre")
+    public ResponseEntity<ApiResponse<PageResVO<TripVO>>> getTripListPre(
+            @ParameterObject @ModelAttribute TripSearchReqVO reqVO) {
+        Integer userId = (Integer) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        reqVO.setUserId(userId);
+        return ResponseEntity.ok(ApiResponse.ok(tripService.getTripListPre(reqVO)));
     }
 
     @Operation(summary = "여행 상세 조회", description = "로그인한 회원 아이디와 여행ID로 여행 상세를 조회합니다.")

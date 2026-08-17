@@ -31,6 +31,7 @@ public class SearchTripController {
         Map<String, Object> params = new HashMap<>();
         params.put("pageNo", tripReqVO.getPageNo());
         params.put("keyword", tripReqVO.getKeyword());
+        params.put("baseYmd", tripReqVO.getBaseYmd());
         return ResponseEntity.ok(ApiResponse.ok(searchTripService.searchTrip(params, "/searchKeyword2")));
     }
 
@@ -46,6 +47,7 @@ public class SearchTripController {
         params.put("mapX", tripReqVO.getMapX());
         params.put("mapY", tripReqVO.getMapY());
         params.put("radius", tripReqVO.getRadius());
+        params.put("baseYmd", tripReqVO.getBaseYmd());
         return ResponseEntity.ok(ApiResponse.ok(searchTripService.searchTrip(params, "/locationBasedList2")));
     }
 }
