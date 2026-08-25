@@ -88,6 +88,7 @@
     <!--
         최근 조회한 장소 조회
         - 동일 CONTENT_ID 중 가장 최근 기록 1개만 조회
+        - 분류체계 1/2/3 제공
         - 최근 조회 순으로 정렬
         - 최대 10개
     -->
@@ -101,6 +102,9 @@
         SH.SPOT_NAME AS spotName,
         SH.ADDRESS AS address,
         SH.THUMBNAIL AS thumbnail,
+        SH.LC_LS_SYSTM1 AS lclsSystm1,
+        SH.LC_LS_SYSTM2 AS lclsSystm2,
+        SH.LC_LS_SYSTM3 AS lclsSystm3,
         SH.UPDATED_AT AS createdAt
         FROM SEARCH_HISTORY SH
         WHERE SH.USER_ID = #{userId}

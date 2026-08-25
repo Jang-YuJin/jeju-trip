@@ -20,5 +20,10 @@ public class SearchHistoryResVO {
     private String address;
     private String thumbnail;
 
+    // 분류체계 1/2/3
+    private String lclsSystm1;
+    private String lclsSystm2;
+    private String lclsSystm3;
+
     private LocalDateTime createdAt;
 }
