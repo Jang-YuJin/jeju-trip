@@ -21,6 +21,9 @@ import java.util.Map;
 public class SearchTripController {
     private final SearchTripService searchTripService;
 
+    private final String[] CONTENT_TYPE_ID = {"12", "14", "15", "25", "28", "38"};
+    private final String[] LCLS_SYSTEM = {"EV","EX","HS","LS","NA","SH","VE","C01"};
+
     /**
      * 한국관광공사_국문 관광정보 서비스_GW API로 관광지 키워드기반 목록 조회
      * @param tripReqVO
@@ -29,6 +32,7 @@ public class SearchTripController {
     @GetMapping("/keyword")
     public ResponseEntity<ApiResponse<List<TripResVO>>> searchTripKeyword(@ModelAttribute TripReqVO tripReqVO) {
         Map<String, Object> params = new HashMap<>();
+        params.put("lclsSystm1", LCLS_SYSTEM);
         params.put("pageNo", tripReqVO.getPageNo());
         params.put("keyword", tripReqVO.getKeyword());
         params.put("baseYmd", tripReqVO.getBaseYmd());
@@ -43,6 +47,7 @@ public class SearchTripController {
     @GetMapping("/location")
     public ResponseEntity<ApiResponse<List<TripResVO>>> searchTripLocation(@ModelAttribute TripReqVO tripReqVO) {
         Map<String, Object> params = new HashMap<>();
+        params.put("contentTypeId", CONTENT_TYPE_ID);
         params.put("pageNo", tripReqVO.getPageNo());
         params.put("mapX", tripReqVO.getMapX());
         params.put("mapY", tripReqVO.getMapY());

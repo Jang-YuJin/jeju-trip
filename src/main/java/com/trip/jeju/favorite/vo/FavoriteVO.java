@@ -35,14 +35,23 @@ public class FavoriteVO {
     @Schema(description = "법정동시군구코드", example = "")
     private String ldongSignguCd;
 
-    @Schema(description = "1", example = "")
+    @Schema(description = "분류체계1", example = "")
     private String lclsSystm1;
 
-    @Schema(description = "분류체계명2", example = "")
+    @Schema(description = "분류체계2", example = "")
     private String lclsSystm2;
 
-    @Schema(description = "분류체계명3", example = "")
+    @Schema(description = "분류체계3", example = "")
     private String lclsSystm3;
+
+    @Schema(description = "분류체계명1", example = "")
+    private String lclsSystm1Nm;
+
+    @Schema(description = "분류체계명2", example = "")
+    private String lclsSystm2Nm;
+
+    @Schema(description = "분류체계명3", example = "")
+    private String lclsSystm3Nm;
 
     @Schema(description = "위도", example = "")
     private BigDecimal latitude;

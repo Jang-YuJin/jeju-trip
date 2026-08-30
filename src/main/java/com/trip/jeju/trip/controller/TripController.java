@@ -27,7 +27,7 @@ import java.util.List;
 public class TripController {
     private final TripService tripService;
 
-    @Operation(summary = "여행 목록 조회(전체)", description = "로그인한 회원 아이디로 여행 목록을 조회합니다.")
+    @Operation(summary = "여행 목록 조회(현재)", description = "로그인한 회원 아이디로 여행 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<PageResVO<TripVO>>> getTripList(
             @ParameterObject @ModelAttribute TripSearchReqVO reqVO) {

@@ -38,62 +38,71 @@ public class SearchTripService {
     @Value("${api.mobile.app}")
     private String app;
 
+
+
     public List<TripResVO> searchTrip(Map<String, Object> params, String endpoint){
-        int numOfRows = 10;
+        int numOfRows = 100;
         String lDongRegnCd = "50";
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString(baseUrl + endpoint)
-                .queryParam("serviceKey", key)
-                .queryParam("numOfRows", numOfRows)
-                .queryParam("MobileOS", os)
-                .queryParam("MobileApp", app)
-                .queryParam("lDongRegnCd", lDongRegnCd)
-                .queryParam("_type", "json");
-
-        params.entrySet().stream()
-                .filter(entry -> !"baseYmd".equals(entry.getKey()))
-                .forEach(entry -> builder.queryParam(entry.getKey(), entry.getValue()));
-
-        String url = builder.build(false).toUriString();
-        log.info("한국관광공사_국문 관광정보 서비스_GW - url: {}", url);
-
+        List<TripResVO> result = new ArrayList<>();
         try {
-            String jsonResponse = restTemplate.getForObject(url, String.class);
-            log.debug("API 응답 JSON - {}", jsonResponse);
+            String[] types = params.get("lclsSystm1") == null ? (String[])params.get("contentTypeId") : (String[])params.get("lclsSystm1");
+            String typeNm = params.get("lclsSystm1") == null ? "contentTypeId" : "lclsSystm1";
+            for (String type : types) {
+                UriComponentsBuilder builder = UriComponentsBuilder
+                        .fromUriString(baseUrl + endpoint)
+                        .queryParam("serviceKey", key)
+                        .queryParam("numOfRows", numOfRows)
+                        .queryParam("MobileOS", os)
+                        .queryParam("MobileApp", app)
+                        .queryParam("lDongRegnCd", lDongRegnCd)
+                        .queryParam("_type", "json");
+                if(typeNm.equals("contentTypeId")){
+                    builder.queryParam("contentTypeId", type);
+                    params.remove("contentTypeId");
+                    params.remove("lclsSystm1");
+                }else{
+                    builder.queryParam("lclsSystm1", type);
+                    params.remove("lclsSystm1");
+                    params.remove("contentTypeId");
+                }
 
-            JsonNode root = objectMapper.readTree(jsonResponse);
+                params.entrySet().stream()
+                        .filter(entry -> !"baseYmd".equals(entry.getKey()))
+                        .forEach(entry -> builder.queryParam(entry.getKey(), entry.getValue()));
 
-            String resultCode = root
-                    .path("response")
-                    .path("header")
-                    .path("resultCode")
-                    .asText();
+                String url = builder.build(false).toUriString();
 
-            if (!"0000".equals(resultCode)) {
-                String resultMsg = root.path("response").path("header").path("resultMsg").asText();
-                log.warn("API 오류 - resultCode: {}, resultMsg: {}", resultCode, resultMsg);
-                return Collections.emptyList();
+                String jsonResponse = restTemplate.getForObject(url, String.class);
+
+                JsonNode root = objectMapper.readTree(jsonResponse);
+
+                String resultCode = root
+                        .path("response")
+                        .path("header")
+                        .path("resultCode")
+                        .asText();
+
+                if (!"0000".equals(resultCode)) {
+                    String resultMsg = root.path("response").path("header").path("resultMsg").asText();
+                    log.warn("API 오류 - resultCode: {}, resultMsg: {}", resultCode, resultMsg);
+                    return Collections.emptyList();
+                }
+
+                JsonNode items = root
+                        .path("response")
+                        .path("body")
+                        .path("items")
+                        .path("item");
+
+                if (items.isMissingNode() || !items.isArray()) {
+                    log.warn("조회 결과 없음");
+                }
+
+                for (JsonNode item : items) {
+                    result.add(toTripResVO(item, params.get("baseYmd")));
+                }
             }
-
-            JsonNode items = root
-                    .path("response")
-                    .path("body")
-                    .path("items")
-                    .path("item");
-
-            if (items.isMissingNode() || !items.isArray()) {
-                log.warn("조회 결과 없음");
-                return Collections.emptyList();
-            }
-
-            List<TripResVO> result = new ArrayList<>();
-            for (JsonNode item : items) {
-                result.add(toTripResVO(item, params.get("baseYmd")));
-            }
-
-            log.info("한국관광공사_국문 관광정보 서비스_GW API 조회 완료 - {}건", result.size());
             return result;
-
         } catch (Exception e) {
             log.error("한국관광공사_국문 관광정보 서비스_GW API 호출 실패 - {}", e.getMessage());
             return Collections.emptyList();
@@ -114,7 +123,6 @@ public class SearchTripService {
                     .queryParam("lclsSystmListYn", "Y")
                     .queryParam("_type", "json")
                     .build(false).toUriString();
-            log.info("한국관광공사_국문 관광정보 서비스_GW 분류체계 코드조회 - url: {}", url);
 
             String jsonResponse = restTemplate.getForObject(url, String.class);
             log.debug("API 응답 JSON - {}", jsonResponse);

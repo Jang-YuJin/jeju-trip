@@ -3,6 +3,7 @@ package com.trip.jeju.trip.service;
 import com.trip.jeju.auth.jwt.JwtProvider;
 import com.trip.jeju.common.util.SecurityUtil;
 import com.trip.jeju.common.vo.PageResVO;
+import com.trip.jeju.congestion.service.CongestionService;
 import com.trip.jeju.trip.mapper.TripMapper;
 import com.trip.jeju.trip.vo.TripDetailVO;
 import com.trip.jeju.trip.vo.TripSaveReqVO;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -22,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TripService {
     private final TripMapper tripMapper;
+    private final CongestionService congestionService;
 
     public PageResVO<TripVO> getTripList(TripSearchReqVO reqVO) {
         List<TripVO> list = tripMapper.selectTripList(reqVO);
@@ -35,7 +39,7 @@ public class TripService {
 
     public PageResVO<TripVO> getTripListNext(TripSearchReqVO reqVO) {
         List<TripVO> list = tripMapper.selectTripListNext(reqVO);
-        int totalCount = tripMapper.selectTripCountNest(reqVO);
+        int totalCount = tripMapper.selectTripCountNext(reqVO);
 
         log.info("TRIP 목록 조회(진행 예정) - pageNo: {}, spotName: {}, category: {}, totalCount: {}",
                 reqVO.getPageNo(), reqVO.getSpotName(), totalCount);
@@ -62,6 +66,15 @@ public class TripService {
 
         // 해당 TRIP의 디테일 목록을 같이 조회해서 세팅
         List<TripDetailVO> details = tripMapper.selectDetailsByTripId(tripId);
+        Map<String, Object> congestionParam = new HashMap<>();
+        for (TripDetailVO detail : details) {
+            congestionParam.put("tAtsNm", detail.getTitle());
+            congestionParam.put("areaCd", detail.getLdongRegnCd());
+            congestionParam.put("signguCd", detail.getLdongSignguCd());
+            congestionParam.put("baseYmd", detail.getVisitDate().toString().replaceAll("-", ""));
+
+            detail.setCongestion(congestionService.getCongestion(congestionParam));
+        }
         trip.setDetails(details);
 
         return trip;
