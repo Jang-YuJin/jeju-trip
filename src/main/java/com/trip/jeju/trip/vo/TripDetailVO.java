@@ -1,5 +1,6 @@
 package com.trip.jeju.trip.vo;
 
+import com.trip.jeju.congestion.vo.CongestionVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -85,4 +86,7 @@ public class TripDetailVO {
 
     @Schema(description = "수정일자", example = "")
     private LocalDateTime updatedAt;
+
+    @Schema(description = "혼잡도", example = "")
+    private CongestionVO congestion;
 }
