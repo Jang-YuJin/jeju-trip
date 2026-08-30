@@ -84,6 +84,8 @@ public class FavoriteService {
 
         Map<String, Object> params = new HashMap<>();
         for (FavoriteVO favorite : list) {
+            favorite = getLclsSystmNm(favorite);
+
             params.put("tAtsNm", favorite.getSpotName());
             params.put("signguCd", favorite.getLdongSignguCd());
             params.put("areaCd", favorite.getLdongRegnCd());
