@@ -10,19 +10,53 @@ import java.util.List;
 
 @Mapper
 public interface TripMapper {
-    List<TripVO> selectTripList(TripSearchReqVO reqVO);
-    int selectTripCount(TripSearchReqVO reqVO);
-    List<TripVO> selectTripListNext(TripSearchReqVO reqVO);
-    int selectTripCountNext(TripSearchReqVO reqVO);
-    List<TripVO> selectTripListPre(TripSearchReqVO reqVO);
-    int selectTripCountPre(TripSearchReqVO reqVO);
-    TripVO selectTripById(@Param("tripId") Integer tripId, @Param("userId") Integer userId);
-    void insertTrip(TripVO tripVO);
-    void updateTrip(TripVO tripVO);
-    void deleteTrip(@Param("tripId") Integer tripId);
 
-    List<TripDetailVO> selectDetailsByTripId(@Param("tripId") Integer tripId);
+    List<TripVO> selectTripList(TripSearchReqVO reqVO);
+
+    int selectTripCount(TripSearchReqVO reqVO);
+
+    List<TripVO> selectTripListNext(TripSearchReqVO reqVO);
+
+    int selectTripCountNext(TripSearchReqVO reqVO);
+
+    List<TripVO> selectTripListPre(TripSearchReqVO reqVO);
+
+    int selectTripCountPre(TripSearchReqVO reqVO);
+
+    TripVO selectTripById(
+            @Param("tripId") Integer tripId,
+            @Param("userId") Integer userId
+    );
+
+    void insertTrip(TripVO tripVO);
+
+    void updateTrip(TripVO tripVO);
+
+    void deleteTrip(
+            @Param("tripId") Integer tripId
+    );
+
+    List<TripDetailVO> selectDetailsByTripId(
+            @Param("tripId") Integer tripId
+    );
+
     void insertDetail(TripDetailVO detailVO);
+
     void updateDetail(TripDetailVO detailVO);
-    void deleteDetailsByTripId(@Param("tripId") Integer tripId);
+
+    // AI 루트 최적화 방문순서 수정
+    void updateVisitOrder(
+            @Param("detailId") Integer detailId,
+            @Param("visitOrder") String visitOrder
+    );
+
+    // AI 루트 적용 여부 수정
+    void updateAiRoute(
+            @Param("tripId") Integer tripId,
+            @Param("isAiRoute") String isAiRoute
+    );
+
+    void deleteDetailsByTripId(
+            @Param("tripId") Integer tripId
+    );
 }

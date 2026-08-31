@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.trip.jeju.trip.mapper.TripMapper">
 
     <!-- 검색조건 공통 부분 (재사용) -->
@@ -10,11 +11,19 @@
         AND t.USER_ID = #{userId}
     </sql>
 
+
     <!-- 목록 조회 (페이징 + 검색조건) -->
     <select id="selectTripList" resultType="com.trip.jeju.trip.vo.TripVO">
         SELECT DISTINCT
-        t.TRIP_ID, t.USER_ID, t.TRIP_NAME, t.START_DATE, t.END_DATE,
-        t.IS_AI_ROUTE, t.SHARE_CODE, t.CREATED_AT, t.UPDATED_AT
+        t.TRIP_ID,
+        t.USER_ID,
+        t.TRIP_NAME,
+        t.START_DATE,
+        t.END_DATE,
+        t.IS_AI_ROUTE,
+        t.SHARE_CODE,
+        t.CREATED_AT,
+        t.UPDATED_AT
         FROM TRIP t
         WHERE 1=1
         <include refid="searchCondition"/>
@@ -22,6 +31,7 @@
         ORDER BY t.CREATED_AT DESC
         LIMIT #{offset}, #{numOfRows}
     </select>
+
 
     <!-- 검색조건에 맞는 전체 개수 -->
     <select id="selectTripCount" resultType="int">
@@ -32,11 +42,19 @@
         AND t.START_DATE <![CDATA[=]]> SYSDATE()
     </select>
 
-    <!-- 목록 조회 (페이징 + 검색조건) -->
+
+    <!-- 목록 조회 (진행 예정) -->
     <select id="selectTripListNext" resultType="com.trip.jeju.trip.vo.TripVO">
         SELECT DISTINCT
-        t.TRIP_ID, t.USER_ID, t.TRIP_NAME, t.START_DATE, t.END_DATE,
-        t.IS_AI_ROUTE, t.SHARE_CODE, t.CREATED_AT, t.UPDATED_AT
+        t.TRIP_ID,
+        t.USER_ID,
+        t.TRIP_NAME,
+        t.START_DATE,
+        t.END_DATE,
+        t.IS_AI_ROUTE,
+        t.SHARE_CODE,
+        t.CREATED_AT,
+        t.UPDATED_AT
         FROM TRIP t
         WHERE 1=1
         <include refid="searchCondition"/>
@@ -45,7 +63,8 @@
         LIMIT #{offset}, #{numOfRows}
     </select>
 
-    <!-- 검색조건에 맞는 전체 개수 -->
+
+    <!-- 진행 예정 여행 전체 개수 -->
     <select id="selectTripCountNext" resultType="int">
         SELECT COUNT(DISTINCT t.TRIP_ID)
         FROM TRIP t
@@ -54,11 +73,19 @@
         AND t.START_DATE <![CDATA[>]]> SYSDATE()
     </select>
 
-    <!-- 목록 조회 (페이징 + 검색조건) -->
+
+    <!-- 목록 조회 (지난 여행) -->
     <select id="selectTripListPre" resultType="com.trip.jeju.trip.vo.TripVO">
         SELECT DISTINCT
-        t.TRIP_ID, t.USER_ID, t.TRIP_NAME, t.START_DATE, t.END_DATE,
-        t.IS_AI_ROUTE, t.SHARE_CODE, t.CREATED_AT, t.UPDATED_AT
+        t.TRIP_ID,
+        t.USER_ID,
+        t.TRIP_NAME,
+        t.START_DATE,
+        t.END_DATE,
+        t.IS_AI_ROUTE,
+        t.SHARE_CODE,
+        t.CREATED_AT,
+        t.UPDATED_AT
         FROM TRIP t
         WHERE 1=1
         <include refid="searchCondition"/>
@@ -67,7 +94,8 @@
         LIMIT #{offset}, #{numOfRows}
     </select>
 
-    <!-- 검색조건에 맞는 전체 개수 -->
+
+    <!-- 지난 여행 전체 개수 -->
     <select id="selectTripCountPre" resultType="int">
         SELECT COUNT(DISTINCT t.TRIP_ID)
         FROM TRIP t
@@ -76,27 +104,56 @@
         AND t.START_DATE <![CDATA[<]]> SYSDATE()
     </select>
 
-    <!-- 단건 조회 -->
+
+    <!-- TRIP 단건 조회 -->
     <select id="selectTripById" resultType="com.trip.jeju.trip.vo.TripVO">
         SELECT
-        TRIP_ID, USER_ID, TRIP_NAME, START_DATE, END_DATE,
-        IS_AI_ROUTE, SHARE_CODE, CREATED_AT, UPDATED_AT
+        TRIP_ID,
+        USER_ID,
+        TRIP_NAME,
+        START_DATE,
+        END_DATE,
+        IS_AI_ROUTE,
+        SHARE_CODE,
+        CREATED_AT,
+        UPDATED_AT
         FROM TRIP
         WHERE TRIP_ID = #{tripId}
         AND USER_ID = #{userId}
     </select>
 
-    <insert id="insertTrip" parameterType="com.trip.jeju.trip.vo.TripVO" useGeneratedKeys="true" keyProperty="tripId">
+
+    <!-- TRIP 등록 -->
+    <insert id="insertTrip"
+            parameterType="com.trip.jeju.trip.vo.TripVO"
+            useGeneratedKeys="true"
+            keyProperty="tripId">
+
         INSERT INTO TRIP (
-        USER_ID, TRIP_NAME, START_DATE, END_DATE, IS_AI_ROUTE, SHARE_CODE
+        USER_ID,
+        TRIP_NAME,
+        START_DATE,
+        END_DATE,
+        IS_AI_ROUTE,
+        SHARE_CODE
         ) VALUES (
-        #{userId}, #{tripName}, #{startDate}, #{endDate}, #{isAiRoute}, #{shareCode}
+        #{userId},
+        #{tripName},
+        #{startDate},
+        #{endDate},
+        #{isAiRoute},
+        #{shareCode}
         )
     </insert>
 
-    <update id="updateTrip" parameterType="com.trip.jeju.trip.vo.TripVO">
+
+    <!-- TRIP 수정 -->
+    <update id="updateTrip"
+            parameterType="com.trip.jeju.trip.vo.TripVO">
+
         UPDATE TRIP
-        SET TRIP_NAME = #{tripName},
+        SET
+        TRIP_NAME = #{tripName},
         START_DATE = #{startDate},
         END_DATE = #{endDate},
         IS_AI_ROUTE = #{isAiRoute},
@@ -104,119 +161,157 @@
         WHERE TRIP_ID = #{tripId}
     </update>
 
+
+    <!-- AI 루트 적용 여부 수정 -->
+    <update id="updateAiRoute">
+        UPDATE TRIP
+        SET
+        IS_AI_ROUTE = #{isAiRoute},
+        UPDATED_AT = SYSDATE()
+        WHERE TRIP_ID = #{tripId}
+    </update>
+
+
+    <!-- TRIP 삭제 -->
     <delete id="deleteTrip">
-        DELETE FROM TRIP WHERE TRIP_ID = #{tripId}
+        DELETE FROM TRIP
+        WHERE TRIP_ID = #{tripId}
     </delete>
 
-    <!-- 특정 TRIP의 디테일 목록 (방문순서 정렬) -->
-    <select id="selectDetailsByTripId" resultType="com.trip.jeju.trip.vo.TripDetailVO">
+
+    <!-- 특정 TRIP의 디테일 목록 (방문일자 + 방문순서 정렬) -->
+    <select id="selectDetailsByTripId"
+            resultType="com.trip.jeju.trip.vo.TripDetailVO">
+
         SELECT
-            DETAIL_ID
-            , TRIP_ID
-            , CONTENT_ID
-            , CONTENT_TYPE_ID
-            , TITLE
-            , TEL
-            , LC_LS_SYSTM1
-            , LC_LS_SYSTM2
-            , LC_LS_SYSTM3
-            , LC_LS_SYSTM1_NM
-            , LC_LS_SYSTM2_NM
-            , LC_LS_SYSTM3_NM
-            , ZIPCODE
-            , ADDR1
-            , ADDR2
-            , L_DONG_REGN_CD
-            , L_DONG_SIGNGU_CD
-            , MAPX
-            , MAPY
-            , VISIT_ORDER
-            , VISIT_DATE
-            , FIRSTIMAGE
-            , CREATED_AT
-            , UPDATED_AT
+        DETAIL_ID,
+        TRIP_ID,
+        CONTENT_ID,
+        CONTENT_TYPE_ID,
+        TITLE,
+        TEL,
+        LC_LS_SYSTM1,
+        LC_LS_SYSTM2,
+        LC_LS_SYSTM3,
+        LC_LS_SYSTM1_NM,
+        LC_LS_SYSTM2_NM,
+        LC_LS_SYSTM3_NM,
+        ZIPCODE,
+        ADDR1,
+        ADDR2,
+        L_DONG_REGN_CD,
+        L_DONG_SIGNGU_CD,
+        MAPX,
+        MAPY,
+        VISIT_ORDER,
+        VISIT_DATE,
+        FIRSTIMAGE,
+        CREATED_AT,
+        UPDATED_AT
         FROM TRIP_DETAIL
         WHERE TRIP_ID = #{tripId}
         ORDER BY VISIT_DATE, VISIT_ORDER ASC
     </select>
 
-    <!-- 등록 (단건) -->
-    <insert id="insertDetail" parameterType="com.trip.jeju.trip.vo.TripDetailVO" useGeneratedKeys="true" keyProperty="detailId">
+
+    <!-- TRIP_DETAIL 등록 -->
+    <insert id="insertDetail"
+            parameterType="com.trip.jeju.trip.vo.TripDetailVO"
+            useGeneratedKeys="true"
+            keyProperty="detailId">
+
         INSERT INTO TRIP_DETAIL (
-            TRIP_ID
-            , CONTENT_ID
-            , CONTENT_TYPE_ID
-            , TITLE
-            , TEL
-            , LC_LS_SYSTM1
-            , LC_LS_SYSTM2
-            , LC_LS_SYSTM3
-            , LC_LS_SYSTM1_NM
-            , LC_LS_SYSTM2_NM
-            , LC_LS_SYSTM3_NM
-            , ZIPCODE
-            , ADDR1
-            , ADDR2
-            , L_DONG_REGN_CD
-            , L_DONG_SIGNGU_CD
-            , MAPX
-            , MAPY
-            , VISIT_ORDER
-            , VISIT_DATE
-            , FIRSTIMAGE
+        TRIP_ID,
+        CONTENT_ID,
+        CONTENT_TYPE_ID,
+        TITLE,
+        TEL,
+        LC_LS_SYSTM1,
+        LC_LS_SYSTM2,
+        LC_LS_SYSTM3,
+        LC_LS_SYSTM1_NM,
+        LC_LS_SYSTM2_NM,
+        LC_LS_SYSTM3_NM,
+        ZIPCODE,
+        ADDR1,
+        ADDR2,
+        L_DONG_REGN_CD,
+        L_DONG_SIGNGU_CD,
+        MAPX,
+        MAPY,
+        VISIT_ORDER,
+        VISIT_DATE,
+        FIRSTIMAGE
         ) VALUES (
-            #{tripId}
-            , #{contentid}
-            , #{contenttypeid}
-            , #{title}
-            , #{tel}
-            , #{lclsSystm1}
-            , #{lclsSystm2}
-            , #{lclsSystm3}
-            , #{lclsSystm1Nm}
-            , #{lclsSystm2Nm}
-            , #{lclsSystm3Nm}
-            , #{zipcode}
-            , #{addr1}
-            , #{addr2}
-            , #{ldongRegnCd}
-            , #{ldongSignguCd}
-            , #{mapx}
-            , #{mapy}
-            , #{visitOrder}
-            , #{visitDate}
-            , #{firstimage}
+        #{tripId},
+        #{contentid},
+        #{contenttypeid},
+        #{title},
+        #{tel},
+        #{lclsSystm1},
+        #{lclsSystm2},
+        #{lclsSystm3},
+        #{lclsSystm1Nm},
+        #{lclsSystm2Nm},
+        #{lclsSystm3Nm},
+        #{zipcode},
+        #{addr1},
+        #{addr2},
+        #{ldongRegnCd},
+        #{ldongSignguCd},
+        #{mapx},
+        #{mapy},
+        #{visitOrder},
+        #{visitDate},
+        #{firstimage}
         )
     </insert>
 
-    <!-- 수정 (단건) -->
-    <update id="updateDetail" parameterType="com.trip.jeju.trip.vo.TripDetailVO">
-        UPDATE TRIP_DETAIL SET
-            CONTENT_ID = #{contentid}
-            CONTENT_TYPE_ID = #{contenttypeid}
-            TITLE = #{title}
-            TEL = #{tel}
-            LC_LS_SYSTM1 = #{lclsSystm1}
-            LC_LS_SYSTM2 = #{lclsSystm2}
-            LC_LS_SYSTM3 = #{lclsSystm3}
-            LC_LS_SYSTM1_NM = #{lclsSystm1Nm}
-            LC_LS_SYSTM2_NM = #{lclsSystm2Nm}
-            LC_LS_SYSTM3_NM = #{lclsSystm3Nm}
-            ZIPCODE = #{zipcode}
-            ADDR1 = #{addr1}
-            ADDR2 = #{addr2}
-            L_DONG_REGN_CD = #{ldongRegnCd}
-            L_DONG_SIGNGU_CD = #{ldongSignguCd}
-            MAPX = #{mapx}
-            MAPY = #{mapy}
-            VISIT_ORDER = #{visitOrder}
-            VISIT_DATE = #{visitDate}
-            FIRSTIMAGE  #{firstimage}
+
+    <!-- TRIP_DETAIL 수정 -->
+    <update id="updateDetail"
+            parameterType="com.trip.jeju.trip.vo.TripDetailVO">
+
+        UPDATE TRIP_DETAIL
+        SET
+        CONTENT_ID = #{contentid},
+        CONTENT_TYPE_ID = #{contenttypeid},
+        TITLE = #{title},
+        TEL = #{tel},
+        LC_LS_SYSTM1 = #{lclsSystm1},
+        LC_LS_SYSTM2 = #{lclsSystm2},
+        LC_LS_SYSTM3 = #{lclsSystm3},
+        LC_LS_SYSTM1_NM = #{lclsSystm1Nm},
+        LC_LS_SYSTM2_NM = #{lclsSystm2Nm},
+        LC_LS_SYSTM3_NM = #{lclsSystm3Nm},
+        ZIPCODE = #{zipcode},
+        ADDR1 = #{addr1},
+        ADDR2 = #{addr2},
+        L_DONG_REGN_CD = #{ldongRegnCd},
+        L_DONG_SIGNGU_CD = #{ldongSignguCd},
+        MAPX = #{mapx},
+        MAPY = #{mapy},
+        VISIT_ORDER = #{visitOrder},
+        VISIT_DATE = #{visitDate},
+        FIRSTIMAGE = #{firstimage}
         WHERE DETAIL_ID = #{detailId}
     </update>
 
-    <!-- TRIP의 디테일 전체 삭제 (수정 시 갈아끼우기 또는 TRIP 삭제 시 사용) -->
+
+    <!-- AI 루트 최적화 방문순서 수정 -->
+    <update id="updateVisitOrder">
+        UPDATE TRIP_DETAIL
+        SET
+        VISIT_ORDER = #{visitOrder},
+        UPDATED_AT = SYSDATE()
+        WHERE DETAIL_ID = #{detailId}
+    </update>
+
+
+    <!-- TRIP의 디테일 전체 삭제 -->
     <delete id="deleteDetailsByTripId">
-        DELETE FROM TRIP_DETAIL WHERE TRIP_ID = #{tripId}
+        DELETE FROM TRIP_DETAIL
+        WHERE TRIP_ID = #{tripId}
     </delete>
+
 </mapper>

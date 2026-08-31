@@ -31,10 +31,17 @@ public class SecurityConfig {
                         s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+
+                        // 로그인 인증 필요
                         .requestMatchers("/trip/**").authenticated()
                         .requestMatchers("/search-history/**").authenticated()
                         .requestMatchers("/favorite/**").authenticated()
                         .requestMatchers("/user/**").authenticated()
+
+                        // AI 여행 루트 최적화
+                        .requestMatchers("/ai/route/**").authenticated()
+
+                        // Swagger
                         .requestMatchers(
                                 "/swagger",
                                 "/swagger-ui.html",
@@ -43,6 +50,8 @@ public class SecurityConfig {
                                 "/api-docs/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
+
+                        // 나머지 API 허용
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(
