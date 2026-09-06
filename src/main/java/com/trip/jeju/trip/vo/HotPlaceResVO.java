@@ -1,5 +1,6 @@
 package com.trip.jeju.trip.vo;
 
+import com.trip.jeju.congestion.vo.CongestionVO;
 import lombok.*;
 
 @Getter
@@ -27,4 +28,6 @@ public class HotPlaceResVO {
 
     private String mapX;
     private String mapY;
+
+    private CongestionVO congestion;
 }

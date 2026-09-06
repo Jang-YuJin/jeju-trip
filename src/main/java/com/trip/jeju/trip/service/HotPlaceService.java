@@ -1,5 +1,7 @@
 package com.trip.jeju.trip.service;
 
+import com.trip.jeju.congestion.service.CongestionService;
+import com.trip.jeju.congestion.vo.CongestionVO;
 import com.trip.jeju.trip.vo.HotPlaceResVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -32,6 +35,8 @@ public class HotPlaceService {
 
     @Value("${api.mobile.app}")
     private String app;
+
+    private final CongestionService congestionService;
 
     public List<HotPlaceResVO> getHotPlaces(String baseYm) {
 
@@ -101,7 +106,13 @@ public class HotPlaceService {
                 return result;
             }
 
+            HashMap<String, Object> congestionParam = new HashMap<>();
             for (JsonNode item : items) {
+                congestionParam.put("areaCd", item.path("areaCd").asText());
+                congestionParam.put("signguCd", item.path("signguCd").asText().substring(2));
+                congestionParam.put("tAtsNm", item.path("hubTatsNm").asText());
+
+                CongestionVO congestion = congestionService.getCongestion(congestionParam);
 
                 result.add(
                         HotPlaceResVO.builder()
@@ -117,6 +128,7 @@ public class HotPlaceService {
                                 .hubRank(item.path("hubRank").asText())
                                 .mapX(item.path("mapX").asText())
                                 .mapY(item.path("mapY").asText())
+                                .congestion(congestion)
                                 .build()
                 );
             }
