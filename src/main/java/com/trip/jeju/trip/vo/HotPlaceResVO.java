@@ -29,5 +29,9 @@ public class HotPlaceResVO {
     private String mapX;
     private String mapY;
 
+    // 혼잡도 정보
     private CongestionVO congestion;
+
+    // 관광지 썸네일 이미지
+    private String thumbnail;
 }
