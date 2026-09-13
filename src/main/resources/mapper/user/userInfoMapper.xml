@@ -8,6 +8,14 @@
             , NICKNAME
             , NAME
             , IMG
+            , AUTH_PROVIDER
+            , CASE WHEN ROLE = 'DELETE' THEN TRUE ELSE FALSE END AS IS_DELETED
         FROM USER WHERE id = #{id}
     </select>
+
+    <update id="withdrawUser">
+        UPDATE USER
+        SET ROLE = 'DELETE'
+        WHERE ID = #{id}
+    </update>
 </mapper>

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,5 +24,12 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ApiResponse<UserVO>> getUser() {
         return ResponseEntity.ok(ApiResponse.ok(userService.getUser()));
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "로그인한 User를 탈퇴 처리합니다.")
+    @DeleteMapping
+    public ResponseEntity<Void> withdrawUser() {
+        userService.withdrawUser();
+        return ResponseEntity.ok().build();
     }
 }

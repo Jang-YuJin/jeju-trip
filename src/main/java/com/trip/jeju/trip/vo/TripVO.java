@@ -21,6 +21,8 @@ public class TripVO {
     private String shareCode;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String cnt;
+    private String firstimage;
 
     private List<TripDetailVO> details;
 }

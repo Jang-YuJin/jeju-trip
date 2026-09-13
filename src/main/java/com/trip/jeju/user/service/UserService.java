@@ -19,4 +19,9 @@ public class UserService {
         Integer userId = SecurityUtil.getCurrentUserId();
         return userMapper.selectUserById(userId);
     }
+
+    public void withdrawUser() {
+        Integer userId = SecurityUtil.getCurrentUserId();
+        userMapper.withdrawUser(userId);
+    }
 }

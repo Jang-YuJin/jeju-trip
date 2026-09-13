@@ -14,18 +14,32 @@
 
     <!-- 목록 조회 (페이징 + 검색조건) -->
     <select id="selectTripList" resultType="com.trip.jeju.trip.vo.TripVO">
-        SELECT DISTINCT
-        t.TRIP_ID,
-        t.USER_ID,
-        t.TRIP_NAME,
-        t.START_DATE,
-        t.END_DATE,
-        t.IS_AI_ROUTE,
-        t.SHARE_CODE,
-        t.CREATED_AT,
-        t.UPDATED_AT
+        SELECT
+            t.TRIP_ID,
+            t.USER_ID,
+            t.TRIP_NAME,
+            t.START_DATE,
+            t.END_DATE,
+            t.IS_AI_ROUTE,
+            t.SHARE_CODE,
+            t.CREATED_AT,
+            t.UPDATED_AT,
+            cnt.CNT,
+            fs.FIRSTIMAGE
         FROM TRIP t
-        WHERE 1=1
+        JOIN (
+            SELECT TRIP_ID, COUNT(*) AS CNT
+            FROM TRIP_DETAIL
+            GROUP BY TRIP_ID
+        ) cnt ON cnt.TRIP_ID = t.TRIP_ID
+        LEFT JOIN (
+            SELECT TRIP_ID, FIRSTIMAGE,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY TRIP_ID
+                       ORDER BY VISIT_DATE ASC, VISIT_ORDER ASC
+                   ) AS rn
+            FROM TRIP_DETAIL
+        ) fs ON fs.TRIP_ID = t.TRIP_ID AND fs.rn = 1
         <include refid="searchCondition"/>
         AND t.START_DATE <![CDATA[=]]> SYSDATE()
         ORDER BY t.CREATED_AT DESC
@@ -45,18 +59,32 @@
 
     <!-- 목록 조회 (진행 예정) -->
     <select id="selectTripListNext" resultType="com.trip.jeju.trip.vo.TripVO">
-        SELECT DISTINCT
-        t.TRIP_ID,
-        t.USER_ID,
-        t.TRIP_NAME,
-        t.START_DATE,
-        t.END_DATE,
-        t.IS_AI_ROUTE,
-        t.SHARE_CODE,
-        t.CREATED_AT,
-        t.UPDATED_AT
+        SELECT
+            t.TRIP_ID,
+            t.USER_ID,
+            t.TRIP_NAME,
+            t.START_DATE,
+            t.END_DATE,
+            t.IS_AI_ROUTE,
+            t.SHARE_CODE,
+            t.CREATED_AT,
+            t.UPDATED_AT,
+            cnt.CNT,
+            fs.FIRSTIMAGE
         FROM TRIP t
-        WHERE 1=1
+        JOIN (
+            SELECT TRIP_ID, COUNT(*) AS CNT
+            FROM TRIP_DETAIL
+            GROUP BY TRIP_ID
+        ) cnt ON cnt.TRIP_ID = t.TRIP_ID
+        LEFT JOIN (
+            SELECT TRIP_ID, FIRSTIMAGE,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY TRIP_ID
+                       ORDER BY VISIT_DATE ASC, VISIT_ORDER ASC
+                   ) AS rn
+            FROM TRIP_DETAIL
+        ) fs ON fs.TRIP_ID = t.TRIP_ID AND fs.rn = 1
         <include refid="searchCondition"/>
         AND t.START_DATE <![CDATA[>]]> SYSDATE()
         ORDER BY t.CREATED_AT DESC
@@ -76,18 +104,32 @@
 
     <!-- 목록 조회 (지난 여행) -->
     <select id="selectTripListPre" resultType="com.trip.jeju.trip.vo.TripVO">
-        SELECT DISTINCT
-        t.TRIP_ID,
-        t.USER_ID,
-        t.TRIP_NAME,
-        t.START_DATE,
-        t.END_DATE,
-        t.IS_AI_ROUTE,
-        t.SHARE_CODE,
-        t.CREATED_AT,
-        t.UPDATED_AT
+        SELECT
+            t.TRIP_ID,
+            t.USER_ID,
+            t.TRIP_NAME,
+            t.START_DATE,
+            t.END_DATE,
+            t.IS_AI_ROUTE,
+            t.SHARE_CODE,
+            t.CREATED_AT,
+            t.UPDATED_AT,
+            cnt.CNT,
+            fs.FIRSTIMAGE
         FROM TRIP t
-        WHERE 1=1
+        JOIN (
+            SELECT TRIP_ID, COUNT(*) AS CNT
+            FROM TRIP_DETAIL
+            GROUP BY TRIP_ID
+        ) cnt ON cnt.TRIP_ID = t.TRIP_ID
+        LEFT JOIN (
+            SELECT TRIP_ID, FIRSTIMAGE,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY TRIP_ID
+                       ORDER BY VISIT_DATE ASC, VISIT_ORDER ASC
+                   ) AS rn
+            FROM TRIP_DETAIL
+        ) fs ON fs.TRIP_ID = t.TRIP_ID AND fs.rn = 1
         <include refid="searchCondition"/>
         AND t.START_DATE <![CDATA[<]]> SYSDATE()
         ORDER BY t.CREATED_AT DESC

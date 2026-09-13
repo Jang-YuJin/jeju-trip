@@ -21,4 +21,10 @@ public class UserVO {
 
     @Schema(description = "프로필 이미지", example = "https://lh3.googleusercontent.com/a/ACg8ocLS4kXusO2-ZDvh0iV7YY0QSmd9HbWYaAi7VyXKLs9XH8v11A=s96-c")
     private String img;
+
+    @Schema(description = "로그인 경로", example = "LOCAL")
+    private String authProvider;
+
+    @Schema(description = "탈퇴 회원 여부", example = "false")
+    private Boolean isDeleted;
 }

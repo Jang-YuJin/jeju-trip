@@ -39,6 +39,9 @@ public class AuthService {
                 || !passwordEncoder.matches(req.getPassword(), user.getPasswordHash())) {
             throw new BadCredentialsException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
+        if ("DELETE".equals(user.getRole())) {
+            throw new BadCredentialsException("탈퇴한 회원입니다.");
+        }
         return issueTokens(user);
     }
 
@@ -87,6 +90,8 @@ public class AuthService {
             user.setRole(UserRole.MEMBER.name());
             // passwordHash는 null (DB 컬럼 NULL 허용으로 변경했으므로)
             userMapper.insertUser(user);
+        } else if ("DELETE".equals(user.getRole())) {
+            throw new BadCredentialsException("탈퇴한 회원입니다.");
         }
 
         return issueTokens(user);

@@ -64,7 +64,7 @@ public class TripController {
     @GetMapping("/{tripId}")
     public ResponseEntity<ApiResponse<TripVO>> getTripDetail(@Parameter(description = "여행 ID", example = "1") @PathVariable Integer tripId) {
         return ResponseEntity.ok(ApiResponse.ok(tripService.getTripDetail(tripId)));
-    }
+    } 
 
     @Operation(summary = "여행 생성", description = "여행을 생성합니다.")
     @PostMapping
