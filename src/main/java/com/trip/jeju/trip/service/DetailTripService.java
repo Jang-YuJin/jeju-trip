@@ -59,12 +59,8 @@ public class DetailTripService {
 
         String url = builder.build(false).toUriString();
 
-        log.info("공통정보조회 URL = {}", url);
-
         try {
             String jsonResponse = restTemplate.getForObject(url, String.class);
-            log.debug("공통정보조회 응답 JSON = {}", jsonResponse);
-
             JsonNode root = objectMapper.readTree(jsonResponse);
 
             String resultCode = root.path("response")
@@ -144,18 +140,10 @@ public class DetailTripService {
         params.forEach(builder::queryParam);
 
         String url = builder.build(false).toUriString();
-
-        log.info("소개정보조회 URL = {}", url);
-
         try {
             String jsonResponse = restTemplate.getForObject(
                     url,
                     String.class
-            );
-
-            log.debug(
-                    "소개정보조회 응답 JSON = {}",
-                    jsonResponse
             );
 
             JsonNode root = objectMapper.readTree(jsonResponse);
@@ -273,17 +261,10 @@ public class DetailTripService {
 
         String url = builder.build(false).toUriString();
 
-        log.info("반복정보조회 URL = {}", url);
-
         try {
             String jsonResponse = restTemplate.getForObject(
                     url,
                     String.class
-            );
-
-            log.debug(
-                    "반복정보조회 응답 JSON = {}",
-                    jsonResponse
             );
 
             JsonNode root = objectMapper.readTree(jsonResponse);
@@ -365,17 +346,10 @@ public class DetailTripService {
 
         String url = builder.build(false).toUriString();
 
-        log.info("이미지정보조회 URL = {}", url);
-
         try {
             String jsonResponse = restTemplate.getForObject(
                     url,
                     String.class
-            );
-
-            log.debug(
-                    "이미지정보조회 응답 JSON = {}",
-                    jsonResponse
             );
 
             JsonNode root = objectMapper.readTree(jsonResponse);
@@ -560,13 +534,6 @@ public class DetailTripService {
                         .saveSearchHistory(
                                 searchHistoryVO
                         );
-
-                log.info(
-                        "상세조회 Search History 저장 완료 - userId: {}, contentId: {}",
-                        userId,
-                        common.getContentid()
-                );
-
             } catch (Exception e) {
 
                 /*

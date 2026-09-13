@@ -50,8 +50,6 @@ public class FavoriteService {
         reqVO.setUserId(String.valueOf(userId));
 
         favoriteMapper.createFavorite(reqVO);
-
-        log.info("즐겨찾기 생성 완료 - userId: {}", userId);
     }
 
     public PageResVO<FavoriteVO> getFavoriteList(FavoriteSearchReq reqVO) {
@@ -74,8 +72,6 @@ public class FavoriteService {
         }
 
         favoriteMapper.deleteFavorite(favoriteId);
-
-        log.info("즐겨찾기 삭제 완료 - favoriteId: {}", favoriteId);
     }
 
     public List<FavoriteVO> getMainFavoriteList() {

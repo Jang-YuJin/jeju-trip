@@ -101,11 +101,7 @@ public class GeminiService {
 
         String prompt = buildRoutePrompt(details);
 
-        log.info("Gemini 여행 루트 최적화 요청 - 관광지 수: {}", details.size());
-
         String aiResponse = generateContent(prompt);
-
-        log.debug("Gemini 여행 루트 최적화 응답 - {}", aiResponse);
 
         return parseRouteResponse(aiResponse);
     }

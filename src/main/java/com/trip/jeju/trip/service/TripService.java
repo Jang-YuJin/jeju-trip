@@ -31,9 +31,6 @@ public class TripService {
         List<TripVO> list = tripMapper.selectTripList(reqVO);
         int totalCount = tripMapper.selectTripCount(reqVO);
 
-        log.info("TRIP 목록 조회 - pageNo: {}, spotName: {}, category: {}, totalCount: {}",
-                reqVO.getPageNo(), reqVO.getSpotName(), totalCount);
-
         return new PageResVO<>(list, totalCount, reqVO.getPageNo(), reqVO.getNumOfRows());
     }
 
@@ -41,18 +38,12 @@ public class TripService {
         List<TripVO> list = tripMapper.selectTripListNext(reqVO);
         int totalCount = tripMapper.selectTripCountNext(reqVO);
 
-        log.info("TRIP 목록 조회(진행 예정) - pageNo: {}, spotName: {}, category: {}, totalCount: {}",
-                reqVO.getPageNo(), reqVO.getSpotName(), totalCount);
-
         return new PageResVO<>(list, totalCount, reqVO.getPageNo(), reqVO.getNumOfRows());
     }
 
     public PageResVO<TripVO> getTripListPre(TripSearchReqVO reqVO) {
         List<TripVO> list = tripMapper.selectTripListPre(reqVO);
         int totalCount = tripMapper.selectTripCountPre(reqVO);
-
-        log.info("TRIP 목록 조회(지난 여행) - pageNo: {}, spotName: {}, category: {}, totalCount: {}",
-                reqVO.getPageNo(), reqVO.getSpotName(), totalCount);
 
         return new PageResVO<>(list, totalCount, reqVO.getPageNo(), reqVO.getNumOfRows());
     }
@@ -97,8 +88,6 @@ public class TripService {
         tripMapper.insertTrip(trip);
         Integer tripId = trip.getTripId();  // useGeneratedKeys로 자동 세팅됨
 
-        log.info("TRIP 생성 완료 - tripId: {}, userId: {}", tripId, userId);
-
         // 2. TRIP_DETAIL이 있으면 함께 등록 (없으면 TRIP만 생성)
         List<TripDetailVO> details = reqVO.getDetails();
         if (details != null && !details.isEmpty()) {
@@ -106,7 +95,6 @@ public class TripService {
                 detail.setTripId(tripId);
                 tripMapper.insertDetail(detail);
             }
-            log.info("TRIP_DETAIL {}건 함께 생성 - tripId: {}", details.size(), tripId);
         }
 
         return tripId;
@@ -131,7 +119,6 @@ public class TripService {
                 .build();
 
         tripMapper.updateTrip(trip);
-        log.info("TRIP 정보 수정 완료 - tripId: {}", tripId);
 
         // 2. details가 넘어온 경우에만 TRIP_DETAIL 갈아끼우기
         List<TripDetailVO> details = reqVO.getDetails();
@@ -144,7 +131,6 @@ public class TripService {
                 detail.setTripId(tripId);
                 tripMapper.insertDetail(detail);
             }
-            log.info("TRIP_DETAIL {}건 갈아끼우기 완료 - tripId: {}", details.size(), tripId);
         }
     }
 
@@ -160,7 +146,5 @@ public class TripService {
 
         // 2. 부모(TRIP) 삭제
         tripMapper.deleteTrip(tripId);
-
-        log.info("TRIP 및 TRIP_DETAIL 삭제 완료 - tripId: {}", tripId);
     }
 }

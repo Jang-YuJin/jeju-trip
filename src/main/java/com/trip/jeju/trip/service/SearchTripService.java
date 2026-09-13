@@ -94,10 +94,6 @@ public class SearchTripService {
                         .path("items")
                         .path("item");
 
-                if (items.isMissingNode() || !items.isArray()) {
-                    log.warn("조회 결과 없음");
-                }
-
                 for (JsonNode item : items) {
                     result.add(toTripResVO(item, params.get("baseYmd")));
                 }
@@ -125,7 +121,6 @@ public class SearchTripService {
                     .build(false).toUriString();
 
             String jsonResponse = restTemplate.getForObject(url, String.class);
-            log.debug("API 응답 JSON - {}", jsonResponse);
 
             JsonNode root = objectMapper.readTree(jsonResponse);
 
@@ -146,11 +141,6 @@ public class SearchTripService {
                     .path("body")
                     .path("items")
                     .path("item");
-
-            if (items.isMissingNode() || !items.isArray()) {
-                log.warn("조회 결과 없음");
-                return null;
-            }
 
             Map<String, Object> params = new HashMap<>();
             params.put("areaCd", item.path("lDongRegnCd").asText());

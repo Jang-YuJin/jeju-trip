@@ -67,12 +67,6 @@ public class AiRouteService {
         // 6. AI 루트 적용 여부 Y로 변경
         tripMapper.updateAiRoute(tripId, "Y");
 
-        log.info(
-                "AI 여행 루트 최적화 및 저장 완료 - tripId: {}, 관광지 수: {}",
-                tripId,
-                optimized.size()
-        );
-
         // 7. 저장된 결과 다시 조회
         return tripMapper.selectDetailsByTripId(tripId);
     }

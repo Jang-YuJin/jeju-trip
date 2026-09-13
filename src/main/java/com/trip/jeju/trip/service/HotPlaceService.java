@@ -90,12 +90,6 @@ public class HotPlaceService {
                 .build(false)
                 .toUriString();
 
-        log.info(
-                "기초지자체 중심 관광정보 API 호출 - signguCd: {}, baseYm: {}",
-                signguCd,
-                baseYm
-        );
-
         try {
 
             String jsonResponse =
@@ -152,12 +146,6 @@ public class HotPlaceService {
                  * 제주국제공항 제외
                  */
                 if ("제주국제공항".equals(hubTatsNm)) {
-
-                    log.info(
-                            "핫플레이스 제외 - {}",
-                            hubTatsNm
-                    );
-
                     continue;
                 }
 
@@ -280,13 +268,6 @@ public class HotPlaceService {
                 getCorrectedKeyword(keyword);
 
         if (!correctedKeyword.equals(keyword)) {
-
-            log.info(
-                    "핫플레이스 썸네일 재검색 - 기존: {}, 보정: {}",
-                    keyword,
-                    correctedKeyword
-            );
-
             thumbnail =
                     searchThumbnail(correctedKeyword);
 

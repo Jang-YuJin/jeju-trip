@@ -48,9 +48,6 @@ public class NaverOAuthService implements SocialOAuthService {
                 new HttpEntity<>(body, headers),
                 JsonNode.class);
 
-        // 토큰 응답 로그
-        log.debug("[Naver] 토큰 응답: {}", response);
-
         return response.get("access_token").asText();
     }
 
@@ -64,11 +61,7 @@ public class NaverOAuthService implements SocialOAuthService {
                 new HttpEntity<>(headers),
                 JsonNode.class).getBody();
 
-        // 프로필 응답 전체 로그 ← 여기서 실제 구조 확인
-        log.debug("[Naver] 프로필 응답: {}", response);
-
         JsonNode account = response.get("response");
-        log.debug("[Naver] account: {}", account);
 
         // null 안전하게 꺼내기
         String socialId = getTextSafely(account, "id");
