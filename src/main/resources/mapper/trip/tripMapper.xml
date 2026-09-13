@@ -40,8 +40,9 @@
                    ) AS rn
             FROM TRIP_DETAIL
         ) fs ON fs.TRIP_ID = t.TRIP_ID AND fs.rn = 1
+        WHERE 1=1
         <include refid="searchCondition"/>
-        AND t.START_DATE <![CDATA[=]]> SYSDATE()
+        AND t.START_DATE <![CDATA[=]]> CURDATE()
         ORDER BY t.CREATED_AT DESC
         LIMIT #{offset}, #{numOfRows}
     </select>
@@ -53,7 +54,7 @@
         FROM TRIP t
         WHERE 1=1
         <include refid="searchCondition"/>
-        AND t.START_DATE <![CDATA[=]]> SYSDATE()
+        AND t.START_DATE <![CDATA[=]]> CURDATE()
     </select>
 
 
@@ -85,8 +86,9 @@
                    ) AS rn
             FROM TRIP_DETAIL
         ) fs ON fs.TRIP_ID = t.TRIP_ID AND fs.rn = 1
+        WHERE 1=1
         <include refid="searchCondition"/>
-        AND t.START_DATE <![CDATA[>]]> SYSDATE()
+        AND t.START_DATE <![CDATA[>]]> CURDATE()
         ORDER BY t.CREATED_AT DESC
         LIMIT #{offset}, #{numOfRows}
     </select>
@@ -98,7 +100,7 @@
         FROM TRIP t
         WHERE 1=1
         <include refid="searchCondition"/>
-        AND t.START_DATE <![CDATA[>]]> SYSDATE()
+        AND t.START_DATE <![CDATA[>]]> CURDATE()
     </select>
 
 
@@ -130,8 +132,9 @@
                    ) AS rn
             FROM TRIP_DETAIL
         ) fs ON fs.TRIP_ID = t.TRIP_ID AND fs.rn = 1
+        WHERE 1=1
         <include refid="searchCondition"/>
-        AND t.START_DATE <![CDATA[<]]> SYSDATE()
+        AND t.START_DATE <![CDATA[<]]> CURDATE()
         ORDER BY t.CREATED_AT DESC
         LIMIT #{offset}, #{numOfRows}
     </select>
@@ -143,7 +146,7 @@
         FROM TRIP t
         WHERE 1=1
         <include refid="searchCondition"/>
-        AND t.START_DATE <![CDATA[<]]> SYSDATE()
+        AND t.START_DATE <![CDATA[<]]> CURDATE()
     </select>
 
 
