@@ -57,7 +57,7 @@ public class SearchTripService {
                 .forEach(entry -> builder.queryParam(entry.getKey(), entry.getValue()));
 
         String url = builder.build(false).toUriString();
-
+        log.info("url: {}", url);
         try {
             String jsonResponse = restTemplate.getForObject(url, String.class);
 
