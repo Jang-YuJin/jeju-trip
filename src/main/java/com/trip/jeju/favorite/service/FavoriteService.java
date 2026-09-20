@@ -105,9 +105,9 @@ public class FavoriteService {
                     .queryParam("lclsSystmListYn", "Y")
                     .queryParam("_type", "json")
                     .build(false).toUriString();
-
+            log.info("url: {}", url);
             String jsonResponse = restTemplate.getForObject(url, String.class);
-
+            log.info("jsonResponse: {}", jsonResponse);
             JsonNode root = objectMapper.readTree(jsonResponse);
 
             String resultCode = root

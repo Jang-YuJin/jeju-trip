@@ -60,7 +60,7 @@ public class SearchTripService {
         log.info("url: {}", url);
         try {
             String jsonResponse = restTemplate.getForObject(url, String.class);
-
+            log.info("jsonResponse: {}", jsonResponse);
             JsonNode root = objectMapper.readTree(jsonResponse);
 
             String resultCode = root
@@ -120,7 +120,7 @@ public class SearchTripService {
                     .build(false).toUriString();
             log.info("url: {}", url);
             String jsonResponse = restTemplate.getForObject(url, String.class);
-
+            log.info("jsonResponse: {}", jsonResponse);
             JsonNode root = objectMapper.readTree(jsonResponse);
 
             String resultCode = root
