@@ -118,7 +118,7 @@ public class SearchTripService {
                     .queryParam("lclsSystmListYn", "Y")
                     .queryParam("_type", "json")
                     .build(false).toUriString();
-
+            log.info("url: {}", url);
             String jsonResponse = restTemplate.getForObject(url, String.class);
 
             JsonNode root = objectMapper.readTree(jsonResponse);
