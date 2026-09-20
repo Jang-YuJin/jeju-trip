@@ -201,7 +201,7 @@
         TRIP_NAME = #{tripName},
         START_DATE = #{startDate},
         END_DATE = #{endDate},
-        IS_AI_ROUTE = #{isAiRoute},
+        IS_AI_ROUTE = 'N',
         SHARE_CODE = #{shareCode}
         WHERE TRIP_ID = #{tripId}
     </update>
