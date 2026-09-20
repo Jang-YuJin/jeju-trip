@@ -73,7 +73,6 @@ public class CongestionService {
                     .path("item");
 
             if (items.isMissingNode() || !items.isArray()) {
-                log.warn("조회 결과 없음");
                 return null;
             }
 

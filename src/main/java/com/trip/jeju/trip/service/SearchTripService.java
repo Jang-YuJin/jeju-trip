@@ -41,6 +41,7 @@ public class SearchTripService {
 
 
     public List<TripResVO> searchTrip(Map<String, Object> params, String endpoint){
+        long searchStart = System.nanoTime();
         int numOfRows = 500;
         String lDongRegnCd = "50";
         UriComponentsBuilder builder = UriComponentsBuilder
@@ -55,10 +56,7 @@ public class SearchTripService {
         params.entrySet().stream()
                 .filter(entry -> !"baseYmd".equals(entry.getKey()))
                 .forEach(entry -> builder.queryParam(entry.getKey(), entry.getValue()));
-
         String url = builder.build(false).toUriString();
-        log.info("url: {}", url);
-        log.info("serviceKey: {}", key);
         try {
             String jsonResponse = restTemplate.getForObject(url, String.class);
             log.info("jsonResponse: {}", jsonResponse);
@@ -86,8 +84,10 @@ public class SearchTripService {
                 log.warn("조회 결과 없음");
                 return Collections.emptyList();
             }
-
+            long searchElapsedNanos = System.nanoTime() - searchStart;
+            log.info("목록 조회 시간 - {}", searchElapsedNanos / 1_000_000 + " ms");
             List<TripResVO> result = new ArrayList<>();
+            long start = System.nanoTime();
             for (JsonNode item : items) {
                 //분류체계 FD(음식), AC(숙박) 제외, 콘텐츠타입아이디 21(숙박), 39(음식점) 제외
                 if("/searchKeyword2".equals(endpoint) && !"FD".equals(item.path("lclsSystm1").asText()) && !"AC".equals(item.path("lclsSystm1").asText()) && !"21".equals(item.path("contenttypeid").asText()) && !"39".equals(item.path("contenttypeid").asText())){
@@ -96,6 +96,8 @@ public class SearchTripService {
                     result.add(toTripResVO(item, params.get("baseYmd")));
                 }
             }
+            long elapsedNanos = System.nanoTime() - searchStart;
+            log.info("분류체계 및 혼잡도 조회 시간 - {}", elapsedNanos / 1_000_000 + " ms");
 
             return result;
 
@@ -119,9 +121,7 @@ public class SearchTripService {
                     .queryParam("lclsSystmListYn", "Y")
                     .queryParam("_type", "json")
                     .build(false).toUriString();
-            log.info("url: {}", url);
             String jsonResponse = restTemplate.getForObject(url, String.class);
-            log.info("jsonResponse: {}", jsonResponse);
             JsonNode root = objectMapper.readTree(jsonResponse);
 
             String resultCode = root
@@ -132,7 +132,6 @@ public class SearchTripService {
 
             if (!"0000".equals(resultCode)) {
                 String resultMsg = root.path("response").path("header").path("resultMsg").asText();
-                log.warn("API 오류 - resultCode: {}, resultMsg: {}", resultCode, resultMsg);
                 return null;
             }
 
