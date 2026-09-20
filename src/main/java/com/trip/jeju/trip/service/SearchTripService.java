@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,8 @@ public class SearchTripService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final CongestionService congestionService;
+
+    private volatile Map<String, String> lclsNameMap; // 1,2,3단계 코드를 모두 담음 (코드가 서로 겹치지 않음)
 
     @Value("${ks.key}")
     private String key;
@@ -86,10 +89,18 @@ public class SearchTripService {
             long searchElapsedNanos = System.nanoTime() - searchStart;
             log.info("목록 조회 시간 - {}", searchElapsedNanos / 1_000_000 + " ms");
             List<TripResVO> result = new ArrayList<>();
+
+            Map<String, String> lclsMap = getLclsNameMap();
+
             long start = System.nanoTime();
             for (JsonNode item : items) {
                 //분류체계 FD(음식), AC(숙박) 제외, 콘텐츠타입아이디 21(숙박), 39(음식점) 제외
                 if("/searchKeyword2".equals(endpoint) && !"FD".equals(item.path("lclsSystm1").asText()) && !"AC".equals(item.path("lclsSystm1").asText()) && !"21".equals(item.path("contenttypeid").asText()) && !"39".equals(item.path("contenttypeid").asText())){
+                    if (item instanceof ObjectNode obj) {
+                        obj.put("lclsSystm1Nm", lclsMap.getOrDefault(item.path("lclsSystm1").asText(), ""));
+                        obj.put("lclsSystm2Nm", lclsMap.getOrDefault(item.path("lclsSystm2").asText(), ""));
+                        obj.put("lclsSystm3Nm", lclsMap.getOrDefault(item.path("lclsSystm3").asText(), ""));
+                    }
                     result.add(toTripResVO(item, params.get("baseYmd")));
                 } else if("/locationBasedList2".equals(endpoint) && !"FD".equals(item.path("lclsSystm1").asText()) && !"AC".equals(item.path("lclsSystm1").asText()) && !"21".equals(item.path("contenttypeid").asText()) && !"39".equals(item.path("contenttypeid").asText())){
                     result.add(toTripResVO(item, params.get("baseYmd")));
@@ -108,38 +119,6 @@ public class SearchTripService {
 
     private TripResVO toTripResVO(JsonNode item, Object baseYmd) {
         try {
-            String url = UriComponentsBuilder
-                    .fromUriString(baseUrl + "/lclsSystmCode2")
-                    .queryParam("serviceKey", key)
-                    .queryParam("numOfRows", 1)
-                    .queryParam("MobileOS", os)
-                    .queryParam("MobileApp", app)
-                    .queryParam("lclsSystm1", item.path("lclsSystm1").asText())
-                    .queryParam("lclsSystm2", item.path("lclsSystm2").asText())
-                    .queryParam("lclsSystm3", item.path("lclsSystm3").asText())
-                    .queryParam("lclsSystmListYn", "Y")
-                    .queryParam("_type", "json")
-                    .build(false).toUriString();
-            String jsonResponse = restTemplate.getForObject(url, String.class);
-            JsonNode root = objectMapper.readTree(jsonResponse);
-
-            String resultCode = root
-                    .path("response")
-                    .path("header")
-                    .path("resultCode")
-                    .asText();
-
-            if (!"0000".equals(resultCode)) {
-                String resultMsg = root.path("response").path("header").path("resultMsg").asText();
-                return null;
-            }
-
-            JsonNode items = root
-                    .path("response")
-                    .path("body")
-                    .path("items")
-                    .path("item");
-
             Map<String, Object> params = new HashMap<>();
             params.put("areaCd", item.path("lDongRegnCd").asText());
             params.put("signguCd", item.path("lDongSignguCd").asText());
@@ -161,11 +140,11 @@ public class SearchTripService {
                     .tel(item.path("tel").asText())
                     .title(item.path("title").asText())
                     .lclsSystm1(item.path("lclsSystm1").asText())
+                    .lclsSystm1Nm(item.path("lclsSystm1Nm").asText())
                     .lclsSystm2(item.path("lclsSystm2").asText())
+                    .lclsSystm2Nm(item.path("lclsSystm2Nm").asText())
                     .lclsSystm3(item.path("lclsSystm3").asText())
-                    .lclsSystm1Nm(items.get(0).path("lclsSystm1Nm").asText())
-                    .lclsSystm2Nm(items.get(0).path("lclsSystm2Nm").asText())
-                    .lclsSystm3Nm(items.get(0).path("lclsSystm3Nm").asText())
+                    .lclsSystm3Nm(item.path("lclsSystm3Nm").asText())
                     .lDongRegnCd(item.path("lDongRegnCd").asText())
                     .lDongSignguCd(item.path("lDongSignguCd").asText())
                     .congestion(congestion)
@@ -174,5 +153,48 @@ public class SearchTripService {
             log.error("한국관광공사_국문 관광정보 서비스_GW 분류체계 코드조회 API 호출 실패 - {}", e.getMessage());
             return null;
         }
+    }
+
+    private Map<String, String> getLclsNameMap() {
+        if (lclsNameMap != null) return lclsNameMap;
+        synchronized (this) {
+            if (lclsNameMap != null) return lclsNameMap;
+
+            String lclsUrl = UriComponentsBuilder
+                    .fromUriString(baseUrl + "/lclsSystmCode2")
+                    .queryParam("serviceKey", key)
+                    .queryParam("numOfRows", 1000)
+                    .queryParam("pageNo", 1)
+                    .queryParam("MobileOS", os)
+                    .queryParam("MobileApp", app)
+                    .queryParam("lclsSystmListYn", "Y")
+                    .queryParam("_type", "json")
+                    .build(false).toUriString();
+
+            Map<String, String> map = new HashMap<>();
+            try {
+                String res = restTemplate.getForObject(lclsUrl, String.class);
+                JsonNode root = objectMapper.readTree(res);
+
+                if (!"0000".equals(root.path("response").path("header").path("resultCode").asText())) {
+                    return map; // 실패 시 캐시하지 않고 다음 호출에서 재시도
+                }
+
+                JsonNode rows = root.path("response").path("body").path("items").path("item");
+                for (JsonNode r : rows) {
+                    putIfPresent(map, r.path("lclsSystm1Cd").asText(), r.path("lclsSystm1Nm").asText());
+                    putIfPresent(map, r.path("lclsSystm2Cd").asText(), r.path("lclsSystm2Nm").asText());
+                    putIfPresent(map, r.path("lclsSystm3Cd").asText(), r.path("lclsSystm3Nm").asText());
+                }
+                lclsNameMap = map;
+            } catch (Exception e) {
+                log.error("분류체계 코드 조회 실패 - {}", e.getMessage());
+            }
+            return map;
+        }
+    }
+
+    private void putIfPresent(Map<String, String> map, String code, String name) {
+        if (!code.isEmpty() && !name.isEmpty()) map.put(code, name);
     }
 }
