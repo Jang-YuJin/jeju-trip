@@ -12,17 +12,8 @@ public class AlternativeTripReqVO {
     // 현재 보고 있는 관광지명
     private String keyword;
 
-    // 기존 호환용
-    private String contentId;
-    private String lclsSystm1;
-    private String lclsSystm2;
-    private String lclsSystm3;
-
-    // 페이지
+    // 페이지 번호
     private int pageNo;
-
-    // 기존 혼잡도 기준 날짜
-    private String baseYmd;
 
     // 연관 관광지 API 기준연월 (YYYYMM)
     private String baseYm;

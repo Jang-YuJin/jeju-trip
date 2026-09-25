@@ -128,9 +128,12 @@ public class AlternativeTripService {
             }
 
             /*
-             * 음식 / 숙박 제외
-             * rlteCtgryLclsNm이 "관광지"인 데이터만 사용
-             * 연관순위가 높은 순서대로 최대 3개 반환
+             * 대체 관광지 필터링
+             *
+             * 1. 음식 / 숙박 제외
+             * 2. "관광지" 분류만 사용
+             * 3. 제주국제공항 제외
+             * 4. 연관순위 기준 최대 3개 반환
              */
             if (items.isArray()) {
 
@@ -139,12 +142,22 @@ public class AlternativeTripService {
                     String category =
                             item.path("rlteCtgryLclsNm").asText();
 
+                    String relatedName =
+                            item.path("rlteTatsNm").asText();
+
+                    // 관광지가 아닌 경우 제외
                     if (!"관광지".equals(category)) {
+                        continue;
+                    }
+
+                    // 제주국제공항 제외
+                    if ("제주국제공항".equals(relatedName)) {
                         continue;
                     }
 
                     result.add(toResponse(item));
 
+                    // 최종 3개까지만 반환
                     if (result.size() >= 3) {
                         break;
                     }
@@ -155,7 +168,12 @@ public class AlternativeTripService {
                 String category =
                         items.path("rlteCtgryLclsNm").asText();
 
-                if ("관광지".equals(category)) {
+                String relatedName =
+                        items.path("rlteTatsNm").asText();
+
+                if ("관광지".equals(category)
+                        && !"제주국제공항".equals(relatedName)) {
+
                     result.add(toResponse(items));
                 }
             }
